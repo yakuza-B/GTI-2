@@ -17,54 +17,14 @@ st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
 
 
-# Apply Custom CSS
+#Custom CSS for Styled Title and Sidebar
 st.markdown("""
     <style>
-        /* Main Page Styling */
-        .main {
-            background-color: #121212;
-            color: #EAEAEA;
-        }
-        /* Title */
-        .title {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        /* Subheading */
-        .subheading {
-            font-size: 24px;
-            font-weight: semi-bold;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        /* Data Table */
-        .dataframe {
-            background-color: #1E1E1E;
-            border-radius: 10px;
-            padding: 10px;
-        }
+        .title { text-align: center; font-size: 36px; font-weight: bold; color: #C70039; }
+        .sidebar .sidebar-content { background-color: #f7f7f7; }
+        .question-box { font-size: 20px; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
-
-# Dashboard Title
-st.markdown('<h1 class="title">Welcome to our interactive Data Science Salary Trends 2023 Dashboard!</h1>', unsafe_allow_html=True)
-
-st.markdown("""
-    <p style="font-size:16px; text-align:center;">
-    This dashboard provides insights into salary trends in the data science industry.
-    Explore how work experience, job titles, and company locations impact salary distribution.
-    </p>
-""", unsafe_allow_html=True)
-
-# Load Dataset
-df = pd.read_csv("your_dataset.csv")
-
-# Display Preprocessed Data
-st.markdown('<h2 class="subheading">Preprocessed Data Science Salary Trends Dataset</h2>', unsafe_allow_html=True)
-st.dataframe(df.style.set_properties(**{'background-color': '#1E1E1E', 'color': '#EAEAEA'}))
-
 
 # Sidebar Navigation
 st.sidebar.title("📍 Navigation")
