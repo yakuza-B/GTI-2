@@ -29,7 +29,7 @@ page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 1
 
 
 if page == "About Us":
-    st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
+    st.markdown("<p class='title'>👥 About Us</p>", unsafe_allow_html=True)
 
     # Welcome Message
     st.write("""
