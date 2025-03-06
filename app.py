@@ -1,25 +1,29 @@
 import streamlit as st
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+from PIL import Image
 
-# --- TITLE ---
-st.title("Global Terrorism Analysis Dashboard")
+# Load an image (replace with a relevant file path)
+image = Image.open("istockphoto-106492379-612x612.jpg")
 
-# --- FILE UPLOAD ---
-uploaded_file = st.file_uploader("Upload Global Terrorism Index CSV", type=["csv"])
+# Set page title and layout
+st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
-if uploaded_file is not None:
-    # Load dataset
-    data = pd.read_csv(uploaded_file)
+# Introduction Section
+st.title("🌍 Global Terrorism Index 2023 Dashboard")
 
-    # Show dataset preview
-    st.write("### Dataset Preview")
-    st.write(data.head())
+st.image(image, use_column_width=True)
 
-    # --- TOP 10 COUNTRIES WITH HIGHEST INCIDENTS ---
-    st.write("### Top 10 Countries with Highest Terrorism Incidents")
-
-    # Check if 'country' and 'incident_count' columns exist
-    if 'country' in data.columns and 'incident_count' in data.columns:
+st.markdown(
+    """
+    ## Understanding Global Terrorism Trends
+    Welcome to the **Global Terrorism Index 2023 Dashboard**, where we analyze and visualize key insights from the latest terrorism data worldwide. 
     
+    ### 📌 What You'll Find Here:
+    - **Interactive Visualizations** of terrorism incidents across different countries.
+    - **Trend Analysis** of incidents over the years.
+    - **Impact Assessment** based on fatalities, injuries, and hostage cases.
+    
+    This dashboard aims to provide a **data-driven perspective** on global security and help policymakers, researchers, and analysts better understand terrorism trends.
+    
+    👉 Use the sidebar to navigate through the sections.
+    """
+)
