@@ -31,26 +31,34 @@ page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 1
 if page == "About Us":
     st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
 
+    # Welcome Message
     st.write("""
-    ## 🌍 About the Global Terrorism Index Dashboard
+    ## 🌟 Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!
     
-    We are a team of data analysts committed to providing insights into global terrorism trends. 
-    This dashboard was developed to help researchers, policymakers, and the public understand 
-    terrorism patterns based on factors such as country, year, number of incidents, and intensity of attacks.
-
-    ### **📊 Key Data Insights:**
-    Below is a **summary** of the top affected countries and incidents in our dataset.
+    This dashboard is designed to provide a **comprehensive analysis** of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as **country**, **year**, **number of incidents**, and **intensity of attacks** impact the global terrorism landscape.
     """)
 
-    # 🧼 Data Preprocessing
-    cleaned_data = data.dropna()  # Remove missing values
-    cleaned_data = cleaned_data.groupby("Country")["Incidents"].sum().reset_index()
-    cleaned_data = cleaned_data.sort_values(by="Incidents", ascending=False).head(5)
+    # Dataset Information
+    st.subheader("📊 Preprocessed Global Terrorism Index Dataset")
+    st.write(f"""
+    - **Number of Rows**: {len(data):,}  
+    - **Key Features**: Country, Year, Incidents, Intensity of Attacks  
+    - **Purpose**: To analyze and visualize terrorism trends across different dimensions.
+    """)
 
-    # 📋 Display Preprocessed Data
-    st.subheader("🌎 Top 5 Most Affected Countries")
-    st.dataframe(cleaned_data)
+    # Display Preprocessed Data (Optional)
+    if st.checkbox("Show Preprocessed Dataset"):
+        st.dataframe(data.head(10))  # Show first 10 rows of the dataset
 
+    # Submitted By Section
+    st.subheader("📝 Submitted By:")
+    st.markdown("""
+    - **Justin Wong Junn Sheng** (0133519)  
+    - **Azran Afzal Bin Azri** (0131249)  
+    - **Wan Muhammad Firdaus** (0136035)  
+    """)
+
+    # Additional Metrics
     total_incidents = data["Incidents"].sum()
     years_covered = data["Year"].nunique()
 
