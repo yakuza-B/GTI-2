@@ -159,7 +159,7 @@ if page == "Introduction":
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
 
     # Moved navigation instructions below the poll
-    st.markdown("📂 **Navigate through the sections using the sidebar.**")
+    st.markdown("📂 **For more infomation, navigate through the sections using the sidebar.**")
 
 
 
