@@ -8,7 +8,7 @@ import plotly.express as px
 # Load Data
 
 
-data = pd.read_csv("/absolute/path/to/Global Terrorism Index 2023.csv")
+data = pd.read_csv("Global Terrorism Index 2023.csv")
 
 
 st.title("Global Terrorism Index 2023 Dashboard")
