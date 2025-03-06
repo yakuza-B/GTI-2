@@ -106,7 +106,7 @@ if page == "Introduction":
             <img src="{image}" width="500">
         </div>
         """, 
-        unsafe_allow_html=True
+        unsafe_allow_html=True)
 
 
 
