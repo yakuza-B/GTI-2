@@ -133,7 +133,28 @@ if page == "Introduction":
     strategies to prevent future threats**.
 
     ---
+    # 🔥 Poll Question
+    st.subheader("📊 Quick Question")
+    st.markdown("<p class='question-box'>Which country had the highest number of terrorism incidents in 2023?</p>", unsafe_allow_html=True)
+
+    options = [
+        "Afghanistan", 
+        "Iraq", 
+        "Nigeria", 
+        "Pakistan", 
+        "Syria", 
+        "India", 
+        "Somalia", 
+        "Philippines"
+    ]
+
+    answer = st.radio("Select an answer:", options)
     
+    if st.button("Submit Answer"):
+        if answer == "Afghanistan":
+            st.success("✅ Correct! Afghanistan had the highest number of terrorism incidents in 2023.")
+        else:
+            st.error("❌ Incorrect. The correct answer is Afghanistan.")
     Navigate through the sections using the sidebar. 📂
     """)
 
