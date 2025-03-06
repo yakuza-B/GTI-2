@@ -161,7 +161,7 @@ if page == "Introduction":
         else:
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
 
-st.write("Navigate through the sections using the sidebar. 📂")
+
 
 # 📊 Overview Page
 elif page == "Overview":
