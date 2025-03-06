@@ -133,10 +133,7 @@ if page == "Introduction":
     strategies to prevent future threats**.
 
     ---
-   
-    Navigate through the sections using the sidebar. 📂
     """)
-
 
     # 🔥 Poll Question
     st.subheader("📊 Quick Question")
@@ -160,6 +157,10 @@ if page == "Introduction":
             st.success("✅ Correct! Afghanistan had the highest number of terrorism incidents in 2023.")
         else:
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
+
+    # Moved navigation instructions below the poll
+    st.markdown("📂 **Navigate through the sections using the sidebar.**")
+
 
 
 
