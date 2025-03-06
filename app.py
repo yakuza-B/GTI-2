@@ -25,7 +25,7 @@ st.markdown("""
 
 # Sidebar Navigation
 st.sidebar.title("📍 Navigation")
-page = st.sidebar.radio("Go to", ["Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
+page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 # 🎯 Introduction Page
 if page == "Introduction":
@@ -33,6 +33,32 @@ if page == "Introduction":
     
     # Center Image
     st.image(image, use_column_width=True)
+
+
+
+    # ℹ️ About Us Page
+elif page == "About Us":
+    st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
+
+    st.write("""
+    ## 🌍 About the Global Terrorism Index Dashboard
+    
+    We are a team of data analysts committed to providing insights into global terrorism trends. 
+    This dashboard was developed to help researchers, policymakers, and the public understand 
+    terrorism patterns based on factors such as country, year, number of incidents, and intensity of attacks.
+
+    ### **📊 What This Dashboard Includes:**
+    - **Exploratory Data Analysis (EDA):** Visualizing and understanding terrorism data.
+    - **Trend Analysis:** Examining how terrorism incidents have evolved over time.
+    - **Geospatial Insights:** Mapping terrorism intensity across different regions.
+
+    Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. 
+    Thank you for using our dashboard!
+    """)
+
+    # Optional: Add an image or team members section
+    st.image("team_photo.jpg", caption="Meet the Team", use_column_width=True)
+
 
 
     
