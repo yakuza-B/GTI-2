@@ -63,13 +63,6 @@ if page == "About Us":
         mime="text/csv"
     )
 
-    # Submitted By Section
-    st.subheader("📝 Submitted By:")
-    st.markdown("""
-    - **Justin Wong Junn Sheng** (0133519)  
-    - **Azran Afzal Bin Azri** (0131249)  
-    - **Wan Muhammad Firdaus** (0136035)  
-    """)
 
     # Additional Metrics
     total_incidents = data["Incidents"].sum()
@@ -91,6 +84,15 @@ if page == "About Us":
     st.write(f"🔹 **Years Covered**: {years_covered}")
 
     st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
+
+
+# Submitted By Section
+    st.subheader("📝 Submitted By:")
+    st.markdown("""
+    - **Bernard**  
+    - **Barry**   
+    - **Travis**  
+    """)
 
 
 
