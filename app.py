@@ -17,9 +17,59 @@ st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 # Custom CSS for Styled Title and Sidebar
 st.markdown("""
     <style>
-        .title { text-align: center; font-size: 36px; font-weight: bold; color: #C70039; }
-        .sidebar .sidebar-content { background-color: #f7f7f7; }
-        .question-box { font-size: 20px; font-weight: bold; }
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #C70039;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .section-header {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .sidebar .sidebar-content {
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .metric-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .question-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333333;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .plot-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -28,18 +78,20 @@ st.sidebar.title("📍 Navigation")
 page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 
+# 🌟 About Us Page
 if page == "About Us":
     st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
 
     # Welcome Message
-    st.write("""
-    ## 🌟 Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!
-    
-    This dashboard is designed to provide a **comprehensive analysis** of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as **country**, **year**, **number of incidents**, **fatalities**, and **injuries** impact the global terrorism landscape.
-    """)
+    st.markdown("""
+    <p class='subtitle'>
+        Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!  
+        This platform provides comprehensive insights into global terrorism trends using data-driven analysis.
+    </p>
+    """, unsafe_allow_html=True)
 
     # Dataset Information
-    st.subheader("📊 Preprocessed Global Terrorism Index Dataset")
+    st.markdown("<p class='section-header'>📊 Preprocessed Global Terrorism Index Dataset</p>", unsafe_allow_html=True)
     st.write(f"""
     - **Number of Rows**: {len(data):,}  
     - **Key Features**: Country, Year, Incidents, Fatalities, Injuries, Hostages  
@@ -51,10 +103,7 @@ if page == "About Us":
         st.dataframe(data)  # Show the entire dataset
 
     # Download Option for Full Dataset
-    st.subheader("📥 Download Full Dataset")
-    st.markdown("""
-    If you'd like to explore the dataset further, you can download it as a CSV file:
-    """)
+    st.markdown("<p class='section-header'>📥 Download Full Dataset</p>", unsafe_allow_html=True)
     csv = data.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="Download Dataset as CSV",
@@ -63,8 +112,8 @@ if page == "About Us":
         mime="text/csv"
     )
 
-
-    # Additional Metrics
+    # Metrics Section
+    st.markdown("<p class='section-header'>📈 Key Metrics</p>", unsafe_allow_html=True)
     total_incidents = data["Incidents"].sum()
     total_fatalities = data["Fatalities"].sum()
     total_injuries = data["Injuries"].sum()
@@ -73,21 +122,18 @@ if page == "About Us":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric(label="📌 Total Incidents Recorded", value=f"{total_incidents:,}")
+        st.markdown("<div class='metric-box'>📌 Total Incidents Recorded<br><span style='font-size: 24px; font-weight: bold;'>{:,}</span></div>".format(total_incidents), unsafe_allow_html=True)
     
     with col2:
-        st.metric(label="💀 Total Fatalities", value=f"{total_fatalities:,}")
+        st.markdown("<div class='metric-box'>💀 Total Fatalities<br><span style='font-size: 24px; font-weight: bold;'>{:,}</span></div>".format(total_fatalities), unsafe_allow_html=True)
     
     with col3:
-        st.metric(label="🚑 Total Injuries", value=f"{total_injuries:,}")
+        st.markdown("<div class='metric-box'>🚑 Total Injuries<br><span style='font-size: 24px; font-weight: bold;'>{:,}</span></div>".format(total_injuries), unsafe_allow_html=True)
 
     st.write(f"🔹 **Years Covered**: {years_covered}")
 
-    st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
-
-
-# Submitted By Section
-    st.subheader("📝 Submitted By:")
+    # Submitted By Section
+    st.markdown("<p class='section-header'>📝 Submitted By:</p>", unsafe_allow_html=True)
     st.markdown("""
     - **Bernard**  
     - **Barry**   
@@ -95,28 +141,21 @@ if page == "About Us":
     """)
 
 
-
-
-   
-
-
-
 # 🎯 Introduction Page
-if page == "Introduction":
+elif page == "Introduction":
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
     # Center Image
     st.image(image, use_column_width=True)
 
-
-
-
-    
     # Introduction Text
-    st.write("""
-    ## 📊 Understanding Global Terrorism Trends
-    Welcome to the **Global Terrorism Index Dashboard**, which provides insights into terrorism incidents worldwide using **2023** data.
+    st.markdown("""
+    <p class='subtitle'>
+        Welcome to the **Global Terrorism Index Dashboard**, which provides insights into terrorism incidents worldwide using **2023** data.
+    </p>
+    """, unsafe_allow_html=True)
 
+    st.markdown("""
     ### 🔹 **Key Features**
     - 📌 Overview of terrorism incidents by **country** and **year**.
     - 🔍 Interactive tools for **data exploration**.
@@ -126,8 +165,7 @@ if page == "Introduction":
     Navigate through the sections using the sidebar. 📂
     """)
 
-    # 🔥 Poll Question
-    st.subheader("📊 Quick Question")
+    # Poll Question
     st.markdown("<p class='question-box'>Which country had the highest number of terrorism incidents in 2023?</p>", unsafe_allow_html=True)
 
     options = [
@@ -149,6 +187,7 @@ if page == "Introduction":
         else:
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
 
+
 # 📊 Overview Page
 elif page == "Overview":
     st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
@@ -160,13 +199,14 @@ elif page == "Overview":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
+        st.markdown("<div class='metric-box'>🌍 Total Incidents Recorded<br><span style='font-size: 24px; font-weight: bold;'>{:,}</span></div>".format(total_incidents), unsafe_allow_html=True)
     
     with col2:
-        st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
+        st.markdown("<div class='metric-box'>🗺️ Countries Affected<br><span style='font-size: 24px; font-weight: bold;'>{}</span></div>".format(affected_countries), unsafe_allow_html=True)
 
-    st.subheader("Dataset Overview")
-    st.write(data.head())
+    st.markdown("<p class='section-header'>Dataset Overview</p>", unsafe_allow_html=True)
+    st.dataframe(data.head())
+
 
 # 🔥 Top 10 Countries Page
 elif page == "Top 10 Countries":
@@ -177,15 +217,18 @@ elif page == "Top 10 Countries":
     incidents_by_country = incidents_by_country.sort_values(by="Incidents", ascending=False).head(10)
     
     # Display Data
+    st.markdown("<p class='section-header'>📊 Top 10 Countries by Incidents</p>", unsafe_allow_html=True)
     st.dataframe(incidents_by_country, height=300)
 
     # Bar Chart
+    st.markdown("<p class='section-header'>📈 Bar Chart Visualization</p>", unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x="Incidents", y="Country", data=incidents_by_country, palette="Reds_r", ax=ax)
     ax.set_xlabel("Number of Incidents")
     ax.set_ylabel("Country")
     ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
     st.pyplot(fig)
+
 
 # 🔍 Data Exploration Page
 elif page == "Data Exploration":
@@ -194,12 +237,13 @@ elif page == "Data Exploration":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📍 Incidents by Country")
+        st.markdown("<p class='section-header'>📍 Incidents by Country</p>", unsafe_allow_html=True)
         st.write(data["Country"].value_counts())
 
     with col2:
-        st.subheader("📆 Incidents by Year")
+        st.markdown("<p class='section-header'>📆 Incidents by Year</p>", unsafe_allow_html=True)
         st.write(data["Year"].value_counts())
+
 
 # 📈 Visualization Page
 elif page == "Visualization":
@@ -209,6 +253,7 @@ elif page == "Visualization":
     incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
     
     # Line Chart
+    st.markdown("<p class='section-header'>📊 Trend Over Time</p>", unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
     ax.set_xlabel("Year")
@@ -217,7 +262,8 @@ elif page == "Visualization":
     ax.grid(True)
     st.pyplot(fig)
     
-    # 🌍 World Heatmap (Choropleth)
+    # World Heatmap (Choropleth)
+    st.markdown("<p class='section-header'>🌍 Global Terrorism Intensity</p>", unsafe_allow_html=True)
     fig = px.choropleth(data, 
                         locations="iso3c", 
                         color="Incidents",
