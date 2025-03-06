@@ -50,7 +50,7 @@ if page == "Introduction":
 
 
     # Poll Question
-    st.subheader("📊 Poll Question")
+    st.subheader("📊 Here's a quick question")
     st.write("Which country do you think had the highest number of terrorism incidents in 2023?")
 
     options = [
