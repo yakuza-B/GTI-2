@@ -48,27 +48,6 @@ if page == "Introduction":
     Navigate through the sections using the sidebar to explore different aspects of terrorism data.
     """)
 
-# Introduction Page
-if page == "Introduction":
-    st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
-    
-    # Center Image
-    st.image(image, use_column_width=True)
-    
-    # Introduction Text
-    st.write("""
-    ## Global Terrorism Index Dashboard
-    Welcome to the **Global Terrorism Index Dashboard**. This application provides insights into terrorism incidents 
-    worldwide using data from **2023**.
-    
-    ### 🔹 Key Features:
-    - 📊 Overview of terrorism incidents by country and year.
-    - 🔎 Data exploration tools to analyze trends.
-    - 📉 Interactive visualizations, including heatmaps and time series charts.
-    - 🌍 Highlights of the top 10 most affected countries.
-    
-    Navigate through the sections using the sidebar to explore different aspects of terrorism data.
-    """)
 
     # Poll Question
     st.subheader("📊 Poll Question")
