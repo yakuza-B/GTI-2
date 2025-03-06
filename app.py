@@ -56,8 +56,7 @@ elif page == "About Us":
     Thank you for using our dashboard!
     """)
 
-    # Optional: Add an image or team members section
-    st.image("team_photo.jpg", caption="Meet the Team", use_column_width=True)
+    
 
 
 
