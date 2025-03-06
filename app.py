@@ -7,6 +7,19 @@ import plotly.express as px
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
 
+from PIL import Image
+
+# Load an image (replace with a relevant file path)
+image = Image.open("terrorism_index.jpg")
+
+# Set page title and layout
+st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
+
+# Introduction Section
+st.title("🌍 Global Terrorism Index 2023 Dashboard")
+
+st.image(image, use_column_width=True)
+
 # Sidebar Navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
