@@ -104,7 +104,15 @@ if page == "Introduction":
    
     
     # Center Image 
-    st.image(image, width=500)  # Adjust the width to your preference
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="data:image/png;base64,{}" width="500">
+    </div>
+    """.format(base64.b64encode(open("your_image.png", "rb").read()).decode()),
+    unsafe_allow_html=True
+)
+
 
 
 
