@@ -1,76 +1,56 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 
-# Load Data
+# --- TITLE ---
+st.title("Terrorism Index Prediction App")
 
+# --- FILE UPLOAD ---
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+if uploaded_file is not None:
+    # Read the uploaded file
+    data = pd.read_csv(uploaded_file)
 
-data = pd.read_csv("Global Terrorism Index 2023.csv")
+    # Show dataset preview
+    st.write("### Dataset Preview")
+    st.write(data.head())
 
+    # --- VISUALIZATION ---
+    st.write("### Data Distribution")
+    numeric_columns = data.select_dtypes(['float64', 'int64']).columns
 
-st.title("Global Terrorism Index 2023 Dashboard")
+    if len(numeric_columns) > 0:
+        selected_col = st.selectbox("Choose a numeric column", numeric_columns)
+        fig, ax = plt.subplots()
+        sns.histplot(data[selected_col], bins=20, kde=True, ax=ax)
+        st.pyplot(fig)
+    else:
+        st.write("No numeric columns available for visualization.")
 
-# Display Data
-st.subheader("Dataset Preview")
-st.dataframe(data.head())
+    # --- FEATURE SELECTION & TRAINING ---
+    st.write("### Model Training")
+    target_col = st.selectbox("Select the target column", numeric_columns)
 
-# Missing Values
-st.subheader("Missing Values in Each Column")
-st.write(data.isnull().sum())
+    if target_col:
+        X = data.drop(columns=[target_col]).select_dtypes(['float64', 'int64'])
+        y = data[target_col]
 
-# Frequency Tables
-st.subheader("Frequency Tables")
-st.write("**ISO3C Codes:**", data.iso3c.value_counts())
-st.write("**Countries:**", data.Country.value_counts())
-st.write("**Rank:**", data.Rank.value_counts())
-st.write("**Score:**", data.Score.value_counts())
-st.write("**Incidents:**", data.Incidents.value_counts())
-st.write("**Fatalities:**", data.Fatalities.value_counts())
-st.write("**Injuries:**", data.Injuries.value_counts())
-st.write("**Hostages:**", data.Hostages.value_counts())
-st.write("**Years:**", data.Year.value_counts())
+        if not X.empty:
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Descriptive Statistics
-st.subheader("Descriptive Statistics")
-st.write(data.describe())
+            model = LinearRegression()
+            model.fit(X_train, y_train)
 
-# Visualization 1: Top 10 Countries with Highest Terrorism Incidents
-st.subheader("Top 10 Countries with Highest Terrorism Incidents")
-incidents_by_country = data.groupby("Country")["Incidents"].sum().reset_index()
-incidents_by_country = incidents_by_country.sort_values(by="Incidents", ascending=False).head(10)
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.barplot(x="Incidents", y="Country", data=incidents_by_country, palette="Reds_r", ax=ax)
-st.pyplot(fig)
+            st.write(f"Model Trained! R² Score: {model.score(X_test, y_test):.2f}")
 
-# Visualization 2: Terrorism Trend Over Time
-st.subheader("Trend of Terrorism Incidents Over Time")
-incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
-st.pyplot(fig)
+            # --- PREDICTION ---
+            st.write("### Make a Prediction")
+            user_input = {col: st.number_input(f"Enter {col}") for col in X.columns}
+            user_df = pd.DataFrame([user_input])
 
-# Visualization 3: Proportion of Fatalities, Injuries, and Hostages
-st.subheader("Proportion of Fatalities, Injuries, and Hostages")
-impact_data = data[["Fatalities", "Injuries", "Hostages"]].sum()
-fig, ax = plt.subplots(figsize=(7, 7))
-ax.pie(impact_data, labels=impact_data.index, autopct="%1.1f%%", colors=["red", "orange", "yellow"], startangle=140)
-st.pyplot(fig)
-
-# Visualization 4: Global Terrorism Intensity Map
-st.subheader("Global Terrorism Intensity Map")
-fig = px.choropleth(data, locations="iso3c", color="Incidents", hover_name="Country",
-                    title="Global Terrorism Intensity", color_continuous_scale="Reds", projection="natural earth")
-st.plotly_chart(fig)
-
-# Visualization 5: Correlation Matrix
-st.subheader("Correlation Matrix of Terrorism Factors")
-numeric_data = data.select_dtypes(include=['number'])
-corr_matrix = numeric_data.corr()
-fig, ax = plt.subplots(figsize=(8, 6))
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5, ax=ax)
-st.pyplot(fig)
-
-st.write("### Dashboard Created with Streamlit")
+            if st.button("Predict"):
+                prediction = model.predict(user_df)
+                st.write(f"### Predicted {target_col}: {prediction[0]:.2f}")
