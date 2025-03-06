@@ -3,11 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+from PIL import Image
 
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
-
-from PIL import Image
 
 # Load an image (replace with a relevant file path)
 image = Image.open("istockphoto-106492379-612x612.jpg")
@@ -15,18 +14,17 @@ image = Image.open("istockphoto-106492379-612x612.jpg")
 # Set page title and layout
 st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
-# Introduction Section
-st.title("🌍 Global Terrorism Index 2023 Dashboard")
-
-st.image(image, use_column_width=True)
-
 # Sidebar Navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 # Introduction Page
 if page == "Introduction":
-    st.title("Introduction")
+    st.title("🌍 Global Terrorism Index 2023 Dashboard")
+    
+    # Display Image only on the Introduction page
+    st.image(image, use_column_width=True)
+
     st.write("""
     ## Global Terrorism Index Dashboard
     Welcome to the Global Terrorism Index Dashboard. This application provides insights into terrorism incidents 
@@ -48,6 +46,7 @@ elif page == "Overview":
     
     st.subheader("Dataset Information")
     st.write(data.head())
+    
     st.write("### Missing Values")
     st.write(data.isnull().sum())
     
@@ -83,7 +82,7 @@ elif page == "Data Exploration":
     
     st.write("Incidents by Year:")
     st.write(data["Year"].value_counts())
-    
+
 # Visualization Page
 elif page == "Visualization":
     st.title("Visualizing Terrorism Trends")
