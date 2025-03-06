@@ -100,7 +100,8 @@ if page == "Introduction":
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
     # Center Image
-    st.image(image, use_column_width=True)
+    st.image(image, use_container_width=True)
+
 
     # Introduction Text
     st.write("""
