@@ -11,140 +11,84 @@ data = pd.read_csv("Global Terrorism Index 2023.csv")
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
 
-# Set Page Title and Layout
+# Set page title and layout
 st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
-# Custom CSS for Styled Title and Sidebar
+# Custom CSS for Styling
 st.markdown("""
     <style>
         .title { text-align: center; font-size: 36px; font-weight: bold; color: #C70039; }
-        .sidebar .sidebar-content { background-color: #f7f7f7; }
-        .question-box { font-size: 20px; font-weight: bold; }
+        .metric-box { border-radius: 10px; padding: 15px; background-color: #f0f2f6; text-align: center; }
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Navigation
-st.sidebar.title("📍 Navigation")
-page = st.sidebar.radio("Go to", ["Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
+# Tab Navigation
+tabs = st.tabs(["Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
-# 🎯 Introduction Page
-if page == "Introduction":
+# Introduction Page
+with tabs[0]:
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
-    
-    # Center Image
     st.image(image, use_column_width=True)
-    
-    # Introduction Text
     st.write("""
-    ## 📊 Understanding Global Terrorism Trends
-    Welcome to the **Global Terrorism Index Dashboard**, which provides insights into terrorism incidents worldwide using **2023** data.
-
-    ### 🔹 **Key Features**
-    - 📌 Overview of terrorism incidents by **country** and **year**.
-    - 🔍 Interactive tools for **data exploration**.
-    - 📊 **Heatmaps & time-series charts** to identify patterns.
-    - 🌎 **Top 10 most affected countries** with deep insights.
+    ## Global Terrorism Index Dashboard
+    Welcome to the **Global Terrorism Index Dashboard**. This application provides insights into terrorism incidents worldwide using data from **2023**.
     
-    Navigate through the sections using the sidebar. 📂
+    ### 🔹 Key Features:
+    - 📊 Overview of terrorism incidents by country and year.
+    - 🔎 Data exploration tools to analyze trends.
+    - 📉 Interactive visualizations, including heatmaps and time series charts.
+    - 🌍 Highlights of the top 10 most affected countries.
+    
+    Navigate through the sections using the tabs above.
     """)
 
-    # 🔥 Poll Question
-    st.subheader("📊 Quick Question")
-    st.markdown("<p class='question-box'>Which country had the highest number of terrorism incidents in 2023?</p>", unsafe_allow_html=True)
-
-    options = [
-        "Afghanistan", 
-        "Iraq", 
-        "Nigeria", 
-        "Pakistan", 
-        "Syria", 
-        "India", 
-        "Somalia", 
-        "Philippines"
-    ]
-
+    # Poll Question
+    st.subheader("📊 Here's a quick question")
+    st.write("Which country do you think had the highest number of terrorism incidents in 2023?")
+    options = ["Afghanistan", "Iraq", "Nigeria", "Pakistan", "Syria", "India", "Somalia", "Philippines"]
     answer = st.radio("Select an answer:", options)
-    
-    if st.button("Submit Answer"):
+    if answer:
         if answer == "Afghanistan":
             st.success("✅ Correct! Afghanistan had the highest number of terrorism incidents in 2023.")
         else:
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
 
-# 📊 Overview Page
-elif page == "Overview":
+# Overview Page
+with tabs[1]:
     st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
-
-    # Quick Stats
-    total_incidents = data["Incidents"].sum()
-    affected_countries = data["Country"].nunique()
-
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
-    
+        st.metric("Total Incidents", data["Incidents"].sum())
     with col2:
-        st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
-
+        st.metric("Countries Affected", data["Country"].nunique())
+    with col3:
+        st.metric("Most Affected Country", data.groupby("Country")["Incidents"].sum().idxmax())
+    
     st.subheader("Dataset Overview")
     st.write(data.head())
 
-# 🔥 Top 10 Countries Page
-elif page == "Top 10 Countries":
-    st.markdown("<p class='title'>🔥 Top 10 Most Affected Countries</p>", unsafe_allow_html=True)
-    
-    # Group by Country and Sum Incidents
+# Top 10 Countries Page
+with tabs[2]:
+    st.markdown("<p class='title'>🔥 Top 10 Countries with Highest Terrorism Incidents</p>", unsafe_allow_html=True)
     incidents_by_country = data.groupby("Country")["Incidents"].sum().reset_index()
     incidents_by_country = incidents_by_country.sort_values(by="Incidents", ascending=False).head(10)
-    
-    # Display Data
-    st.dataframe(incidents_by_country, height=300)
+    fig = px.bar(incidents_by_country, x="Incidents", y="Country", orientation='h', color="Incidents", color_continuous_scale="Reds")
+    st.plotly_chart(fig)
 
-    # Bar Chart
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.barplot(x="Incidents", y="Country", data=incidents_by_country, palette="Reds_r", ax=ax)
-    ax.set_xlabel("Number of Incidents")
-    ax.set_ylabel("Country")
-    ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
-    st.pyplot(fig)
+# Data Exploration Page
+with tabs[3]:
+    st.markdown("<p class='title'>🔍 Data Exploration</p>", unsafe_allow_html=True)
+    country_filter = st.selectbox("Select a Country", options=data["Country"].unique())
+    filtered_data = data[data["Country"] == country_filter]
+    st.write(filtered_data)
 
-# 🔍 Data Exploration Page
-elif page == "Data Exploration":
-    st.markdown("<p class='title'>🔍 Explore the Data</p>", unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("📍 Incidents by Country")
-        st.write(data["Country"].value_counts())
-
-    with col2:
-        st.subheader("📆 Incidents by Year")
-        st.write(data["Year"].value_counts())
-
-# 📈 Visualization Page
-elif page == "Visualization":
+# Visualization Page
+with tabs[4]:
     st.markdown("<p class='title'>📈 Visualizing Terrorism Trends</p>", unsafe_allow_html=True)
-    
-    # Group by Year and Sum Incidents
     incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
+    fig = px.line(incidents_by_year, x="Year", y="Incidents", markers=True, title="Trend of Terrorism Incidents Over Time")
+    st.plotly_chart(fig)
     
-    # Line Chart
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Total Incidents")
-    ax.set_title("Trend of Terrorism Incidents Over Time")
-    ax.grid(True)
-    st.pyplot(fig)
-    
-    # 🌍 World Heatmap (Choropleth)
-    fig = px.choropleth(data, 
-                        locations="iso3c", 
-                        color="Incidents",
-                        hover_name="Country",
-                        title="Global Terrorism Intensity",
-                        color_continuous_scale="Reds",
-                        projection="natural earth")
+    fig = px.choropleth(data, locations="iso3c", color="Incidents", hover_name="Country", title="Global Terrorism Intensity", color_continuous_scale="Reds", projection="natural earth")
     st.plotly_chart(fig)
