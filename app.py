@@ -35,14 +35,14 @@ if page == "About Us":
     st.write("""
     ## 🌟 Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!
     
-    This dashboard is designed to provide a **comprehensive analysis** of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as **country**, **year**, **number of incidents**, and **intensity of attacks** impact the global terrorism landscape.
+    This dashboard is designed to provide a **comprehensive analysis** of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as **country**, **year**, **number of incidents**, **fatalities**, and **injuries** impact the global terrorism landscape.
     """)
 
     # Dataset Information
     st.subheader("📊 Preprocessed Global Terrorism Index Dataset")
     st.write(f"""
     - **Number of Rows**: {len(data):,}  
-    - **Key Features**: Country, Year, Incidents, Intensity of Attacks  
+    - **Key Features**: Country, Year, Incidents, Fatalities, Injuries, Hostages  
     - **Purpose**: To analyze and visualize terrorism trends across different dimensions.
     """)
 
@@ -60,15 +60,22 @@ if page == "About Us":
 
     # Additional Metrics
     total_incidents = data["Incidents"].sum()
+    total_fatalities = data["Fatalities"].sum()
+    total_injuries = data["Injuries"].sum()
     years_covered = data["Year"].nunique()
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         st.metric(label="📌 Total Incidents Recorded", value=f"{total_incidents:,}")
     
     with col2:
-        st.metric(label="📆 Years Covered", value=f"{years_covered} Years")
+        st.metric(label="💀 Total Fatalities", value=f"{total_fatalities:,}")
+    
+    with col3:
+        st.metric(label="🚑 Total Injuries", value=f"{total_injuries:,}")
+
+    st.write(f"🔹 **Years Covered**: {years_covered}")
 
     st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
 
