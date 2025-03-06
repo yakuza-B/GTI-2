@@ -14,7 +14,7 @@ image = Image.open("istockphoto-106492379-612x612.jpg")
 # Set Page Title and Layout
 st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
-# Custom CSS for Styled Title and Sidebar
+# Custom CSS for Styled Titles, Subtitles, and Layout
 st.markdown("""
     <style>
         /* Global Styles */
@@ -22,9 +22,9 @@ st.markdown("""
             font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
         }
-        .title {
+        .main-title {
             text-align: center;
-            font-size: 48px;
+            font-size: 56px;
             font-weight: bold;
             color: #C70039;
             margin-bottom: 30px;
@@ -32,12 +32,13 @@ st.markdown("""
         }
         .subtitle {
             text-align: center;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: bold;
             color: #333333;
             margin-bottom: 20px;
         }
         .section-header {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #4CAF50;
             margin-top: 30px;
@@ -55,15 +56,6 @@ st.markdown("""
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .question-box {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333333;
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
         .plot-container {
             background-color: #ffffff;
             padding: 20px;
@@ -80,9 +72,7 @@ page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 1
 
 # 🌟 About Us Page
 if page == "About Us":
-    st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
-
-    # Welcome Message
+    st.markdown("<p class='main-title'>ℹ️ About Us</p>", unsafe_allow_html=True)
     st.markdown("""
     <p class='subtitle'>
         Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!  
@@ -143,7 +133,7 @@ if page == "About Us":
 
 # 🎯 Introduction Page
 elif page == "Introduction":
-    st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
+    st.markdown("<p class='main-title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
     # Center Image
     st.image(image, use_column_width=True)
@@ -151,7 +141,8 @@ elif page == "Introduction":
     # Introduction Text
     st.markdown("""
     <p class='subtitle'>
-        Welcome to the **Global Terrorism Index Dashboard**, which provides insights into terrorism incidents worldwide using **2023** data.
+        Understanding Global Terrorism Trends  
+        Explore terrorism incidents worldwide using **2023** data.
     </p>
     """, unsafe_allow_html=True)
 
@@ -166,6 +157,7 @@ elif page == "Introduction":
     """)
 
     # Poll Question
+    st.markdown("<p class='section-header'>📊 Quick Question</p>", unsafe_allow_html=True)
     st.markdown("<p class='question-box'>Which country had the highest number of terrorism incidents in 2023?</p>", unsafe_allow_html=True)
 
     options = [
@@ -190,7 +182,7 @@ elif page == "Introduction":
 
 # 📊 Overview Page
 elif page == "Overview":
-    st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
+    st.markdown("<p class='main-title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
 
     # Quick Stats
     total_incidents = data["Incidents"].sum()
@@ -210,7 +202,7 @@ elif page == "Overview":
 
 # 🔥 Top 10 Countries Page
 elif page == "Top 10 Countries":
-    st.markdown("<p class='title'>🔥 Top 10 Most Affected Countries</p>", unsafe_allow_html=True)
+    st.markdown("<p class='main-title'>🔥 Top 10 Most Affected Countries</p>", unsafe_allow_html=True)
     
     # Group by Country and Sum Incidents
     incidents_by_country = data.groupby("Country")["Incidents"].sum().reset_index()
@@ -228,47 +220,3 @@ elif page == "Top 10 Countries":
     ax.set_ylabel("Country")
     ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
     st.pyplot(fig)
-
-
-# 🔍 Data Exploration Page
-elif page == "Data Exploration":
-    st.markdown("<p class='title'>🔍 Explore the Data</p>", unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("<p class='section-header'>📍 Incidents by Country</p>", unsafe_allow_html=True)
-        st.write(data["Country"].value_counts())
-
-    with col2:
-        st.markdown("<p class='section-header'>📆 Incidents by Year</p>", unsafe_allow_html=True)
-        st.write(data["Year"].value_counts())
-
-
-# 📈 Visualization Page
-elif page == "Visualization":
-    st.markdown("<p class='title'>📈 Visualizing Terrorism Trends</p>", unsafe_allow_html=True)
-    
-    # Group by Year and Sum Incidents
-    incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
-    
-    # Line Chart
-    st.markdown("<p class='section-header'>📊 Trend Over Time</p>", unsafe_allow_html=True)
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Total Incidents")
-    ax.set_title("Trend of Terrorism Incidents Over Time")
-    ax.grid(True)
-    st.pyplot(fig)
-    
-    # World Heatmap (Choropleth)
-    st.markdown("<p class='section-header'>🌍 Global Terrorism Intensity</p>", unsafe_allow_html=True)
-    fig = px.choropleth(data, 
-                        locations="iso3c", 
-                        color="Incidents",
-                        hover_name="Country",
-                        title="Global Terrorism Intensity",
-                        color_continuous_scale="Reds",
-                        projection="natural earth")
-    st.plotly_chart(fig)
