@@ -27,16 +27,8 @@ st.markdown("""
 st.sidebar.title("📍 Navigation")
 page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
-# 🎯 Introduction Page
-if page == "Introduction":
-    st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
-    
-    # Center Image
-    st.image(image, use_column_width=True)
 
-
-
-    # ℹ️ About Us Page
+ # ℹ️ About Us Page
 elif page == "About Us":
     st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
 
@@ -56,7 +48,14 @@ elif page == "About Us":
     Thank you for using our dashboard!
     """)
 
+
+# 🎯 Introduction Page
+if page == "Introduction":
+    st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
+    # Center Image
+    st.image(image, use_column_width=True)
+
 
 
 
