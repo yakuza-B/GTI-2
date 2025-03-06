@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 from PIL import Image
-import base64  # Required for base64 encoding
-from io import BytesIO  # Required for handling im
+
 
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
@@ -104,12 +103,9 @@ if page == "Introduction":
     
    
     
-    # Center Image using HTML and CSS
-    st.markdown("""
-        <div style="display: flex; justify-content: center;">
-            <img src="data:image/jpeg;base64,{}" width="500">
-        </div>
-    """.format(image_to_base64(image)), unsafe_allow_html=True)
+    # Center Image 
+    st.image(image, width=500)  # Adjust the width to your preference
+
 
 
 
