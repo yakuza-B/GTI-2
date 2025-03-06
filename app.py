@@ -28,7 +28,7 @@ st.sidebar.title("📍 Navigation")
 page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 
- # ℹ️ About Us Page
+# ℹ️ About Us Page
 elif page == "About Us":
     st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
 
@@ -47,6 +47,9 @@ elif page == "About Us":
     Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. 
     Thank you for using our dashboard!
     """)
+
+   
+
 
 
 # 🎯 Introduction Page
