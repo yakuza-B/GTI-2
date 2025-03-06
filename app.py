@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 from PIL import Image
+import base64  # Required for base64 encoding
+from io import BytesIO  # Required for handling im
 
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
