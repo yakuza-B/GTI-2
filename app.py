@@ -46,10 +46,30 @@ if page == "About Us":
     - **Purpose**: To analyze and visualize terrorism trends across different dimensions.
     """)
 
-    # Display Preprocessed Data (Optional)
-    if st.checkbox("Show Preprocessed Dataset"):
-        st.dataframe(data.head(10))  # Show first 10 rows of the dataset
+    # Display Full Dataset (Optional)
+    if st.checkbox("Show Full Dataset"):
+        st.dataframe(data)  # Show the entire dataset
 
+    # Download Option for Full Dataset
+    st.subheader("📥 Download Full Dataset")
+    st.markdown("""
+    If you'd like to explore the dataset further, you can download it as a CSV file:
+    """)
+    csv = data.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="Download Dataset as CSV",
+        data=csv,
+        file_name="Global_Terrorism_Index_2023.csv",
+        mime="text/csv"
+    )
+
+    # Submitted By Section
+    st.subheader("📝 Submitted By:")
+    st.markdown("""
+    - **Justin Wong Junn Sheng** (0133519)  
+    - **Azran Afzal Bin Azri** (0131249)  
+    - **Wan Muhammad Firdaus** (0136035)  
+    """)
 
     # Additional Metrics
     total_incidents = data["Incidents"].sum()
@@ -71,15 +91,6 @@ if page == "About Us":
     st.write(f"🔹 **Years Covered**: {years_covered}")
 
     st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
-
-
-  # Submitted By Section
-    st.subheader("📝 Submitted By:")
-    st.markdown("""
-    - **Bernard**   
-    - **Barry**   
-    - **Travis**   
-    """)
 
 
 
