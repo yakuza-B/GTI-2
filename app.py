@@ -4,6 +4,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 from PIL import Image
+import base64
+import streamlit as st
+
+# Encode the image as base64
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+# Replace 'your_image.png' with the actual image filename
+image_base64 = get_base64_image("istockphoto-106492379-612x612.jpg")
 
 
 # Load Data
