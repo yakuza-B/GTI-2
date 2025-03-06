@@ -17,7 +17,7 @@ st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 #Custom CSS for Styled Title and Sidebar
 st.markdown("""
     <style>
-        .title { text-align: center; font-size: 58px; font-weight: bold; color: #C70039; }
+        .title { text-align: center; font-size: 58px; font-weight: bold; color: white; }
         .sidebar .sidebar-content { background-color: #f7f7f7; }
         .question-box { font-size: 20px; font-weight: bold; }
     </style>
