@@ -28,8 +28,7 @@ st.sidebar.title("📍 Navigation")
 page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 
-# ℹ️ About Us Page
-if page == "About Us":  # <-- FIXED THIS LINE
+if page == "About Us":
     st.markdown("<p class='title'>ℹ️ About Us</p>", unsafe_allow_html=True)
 
     st.write("""
@@ -39,19 +38,33 @@ if page == "About Us":  # <-- FIXED THIS LINE
     This dashboard was developed to help researchers, policymakers, and the public understand 
     terrorism patterns based on factors such as country, year, number of incidents, and intensity of attacks.
 
-    ### **📊 What This Dashboard Includes:**
-    - **Exploratory Data Analysis (EDA):** Visualizing and understanding terrorism data.
-    - **Trend Analysis:** Examining how terrorism incidents have evolved over time.
-    - **Geospatial Insights:** Mapping terrorism intensity across different regions.
-
-    Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. 
-    Thank you for using our dashboard!
+    ### **📊 Key Data Insights:**
+    Below is a **summary** of the top affected countries and incidents in our dataset.
     """)
-pd.set_option('display.max_rows', None)  # Show all rows
-pd.set_option('display.max_columns', None)  # Show all columns
 
-# Display the preprocessed data
-print(data)
+    # 🧼 Data Preprocessing
+    cleaned_data = data.dropna()  # Remove missing values
+    cleaned_data = cleaned_data.groupby("Country")["Incidents"].sum().reset_index()
+    cleaned_data = cleaned_data.sort_values(by="Incidents", ascending=False).head(5)
+
+    # 📋 Display Preprocessed Data
+    st.subheader("🌎 Top 5 Most Affected Countries")
+    st.dataframe(cleaned_data)
+
+    total_incidents = data["Incidents"].sum()
+    years_covered = data["Year"].nunique()
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric(label="📌 Total Incidents Recorded", value=f"{total_incidents:,}")
+    
+    with col2:
+        st.metric(label="📆 Years Covered", value=f"{years_covered} Years")
+
+    st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
+
+
 
 
    
