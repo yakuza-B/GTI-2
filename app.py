@@ -106,14 +106,27 @@ if page == "Introduction":
     
     # Introduction Text
     st.write("""
-    ## 📊 Understanding Global Terrorism Trends
-    Welcome to the **Global Terrorism Index Dashboard**, which provides insights into terrorism incidents worldwide using **2023** data.
+    📊 Understanding Global Terrorism Trends
+Terrorism remains one of the most critical global security challenges, affecting millions of lives and disrupting societies. The Global Terrorism Index Dashboard provides insights into terrorism incidents worldwide using 2023 data.
 
-    ### 🔹 **Key Features**
-    - 📌 Overview of terrorism incidents by **country** and **year**.
-    - 🔍 Interactive tools for **data exploration**.
-    - 📊 **Heatmaps & time-series charts** to identify patterns.
-    - 🌎 **Top 10 most affected countries** with deep insights.
+🛡️ What is Terrorism?
+Terrorism refers to the unlawful use of violence and intimidation, especially against civilians, to achieve political, religious, or ideological goals. It often targets governments, infrastructure, and innocent populations to spread fear and influence decision-making.
+
+🌎 Global Trends in Terrorism
+Over the years, terrorism has evolved in scale, tactics, and geographical distribution. Some key trends include:
+
+📈 Rise and fall of terrorist organizations: Groups like ISIS, Al-Qaeda, and Boko Haram have shaped global security, while some have weakened due to counterterrorism efforts.
+🌍 Regional Hotspots: The highest number of terrorist attacks occur in regions like the Middle East, South Asia, and Africa.
+🔥 Shifting Strategies: Terrorist groups have adapted to technology, using social media for propaganda, recruitment, and financing.
+📉 Declining Trends: Some regions have seen a decrease in attacks due to strong counterterrorism policies and intelligence cooperation.
+🔹 Key Features of This Dashboard
+This dashboard allows users to explore global terrorism trends using real-time data and visualization tools.
+
+📌 Overview of terrorism incidents by country and year.
+🔍 Interactive tools for analyzing trends and patterns.
+📊 Heatmaps & time-series charts to understand attack frequency.
+🌎 Insights on the top 10 most affected countries.
+By studying these trends, policymakers, researchers, and the public can better understand terrorism and develop strategies to prevent future threats.
     
     Navigate through the sections using the sidebar. 📂
     """)
