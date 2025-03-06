@@ -14,13 +14,10 @@ image = Image.open("istockphoto-106492379-612x612.jpg")
 # Set Page Title and Layout
 st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
 
-
-
-
 #Custom CSS for Styled Title and Sidebar
 st.markdown("""
     <style>
-        .title { text-align: center; font-size: 36px; font-weight: bold; color: #C70039; }
+        .title { text-align: center; font-size: 48px; font-weight: bold; color: #C70039; }
         .sidebar .sidebar-content { background-color: #f7f7f7; }
         .question-box { font-size: 20px; font-weight: bold; }
     </style>
@@ -98,20 +95,12 @@ if page == "About Us":
     """)
 
 
-
-
-   
-
-
-
 # 🎯 Introduction Page
 if page == "Introduction":
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
     # Center Image
     st.image(image, use_column_width=True)
-
-
 
 
     
