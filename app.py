@@ -10,7 +10,7 @@ data = pd.read_csv("Global Terrorism Index 2023.csv")
 from PIL import Image
 
 # Load an image (replace with a relevant file path)
-image = Image.open("terrorism_index.jpg")
+image = Image.open("istockphoto-106492379-612x612.jpg")
 
 # Set page title and layout
 st.set_page_config(page_title="Global Terrorism Dashboard", layout="wide")
