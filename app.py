@@ -47,6 +47,11 @@ if page == "About Us":  # <-- FIXED THIS LINE
     Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. 
     Thank you for using our dashboard!
     """)
+pd.set_option('display.max_rows', None)  # Show all rows
+pd.set_option('display.max_columns', None)  # Show all columns
+
+# Display the preprocessed data
+print(data)
 
 
    
