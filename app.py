@@ -99,8 +99,15 @@ if page == "About Us":
 if page == "Introduction":
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
-    # Center Image
-    st.image(image, width=500)  # Adjust the width to your preference
+    
+   
+    
+    # Center Image using HTML and CSS
+    st.markdown("""
+        <div style="display: flex; justify-content: center;">
+            <img src="data:image/jpeg;base64,{}" width="500">
+        </div>
+    """.format(image_to_base64(image)), unsafe_allow_html=True)
 
 
 
