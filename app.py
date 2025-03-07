@@ -202,45 +202,45 @@ if page == "Overview":
     # Centered Title
     st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
 
-    # 📍 Region Selection
+    # 🌍 Generate Region-Specific Choropleth Map First
+    st.subheader("Global Terrorism Map")
+
+    fig = px.choropleth(
+        data_frame=data,
+        locations="Country",
+        locationmode="country names",
+        color="Incidents",
+        title="Global Terrorism Incidents by Country",
+        color_continuous_scale="purples",
+        template="plotly_dark"
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    # 📍 Region Selection (Now below the map)
     st.subheader("Select a Region")
-    
-    # Define the updated regions
     regions = {
-        "North America": ["United States", "Canada", "Mexico"],
-        "South America": ["Brazil", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Bolivia", "Paraguay", "Uruguay"],
-        "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands", "Sweden", "Poland", "Belgium", "Austria", "Switzerland", "Norway", "Denmark", "Finland", "Portugal", "Greece", "Czech Republic", "Hungary", "Ireland", "Slovakia", "Slovenia", "Romania", "Bulgaria", "Ukraine", "Russia"],
-        "Africa": ["Nigeria", "South Africa", "Egypt", "Kenya", "Ethiopia", "Ghana", "Sudan", "Uganda", "Algeria", "Morocco", "Tunisia", "Libya", "Congo", "Tanzania", "Zambia", "Zimbabwe"],
-        "Middle East": ["Iran", "Iraq", "Syria", "Saudi Arabia", "Yemen", "Israel", "Lebanon", "Jordan", "United Arab Emirates", "Kuwait", "Qatar", "Bahrain", "Oman"],
-        "Asia": ["China", "India", "Japan", "South Korea", "Indonesia", "Malaysia", "Thailand", "Vietnam", "Pakistan", "Bangladesh", "Philippines", "Myanmar", "Sri Lanka", "Nepal", "Kazakhstan", "Uzbekistan", "Afghanistan"],
-        "Oceania": ["Australia", "New Zealand", "Fiji", "Papua New Guinea"]
+        "NA": "North America",
+        "EU": "Europe",
+        "SA": "South America",
+        "AF": "Africa",
+        "AS": "Asia"
     }
+    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
 
-    # Create a selection box for regions
-    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True)
-
-    # 📌 Dynamically update country selection based on selected region
-    filtered_countries = regions[selected_region]
+    # 📌 Country Selection (Now based on selected region)
+    region_countries = {
+        "NA": ["United States", "Canada", "Mexico"],
+        "EU": ["United Kingdom", "Germany", "France", "Italy", "Spain"],
+        "SA": ["Brazil", "Argentina", "Colombia", "Chile", "Peru"],
+        "AF": ["South Africa", "Nigeria", "Egypt", "Kenya"],
+        "AS": ["China", "India", "Japan", "Indonesia", "Malaysia"]
+    }
+    
+    filtered_countries = region_countries[selected_region]
     selected_country = st.selectbox("Country Selection:", filtered_countries)
 
     # 🌍 Filter data based on selected region
     filtered_data = data[data["Country"].isin(filtered_countries)]
-
-    # 🌍 Generate Region-Specific Choropleth Map
-    st.subheader(f"Map of {selected_region}")
-    if not filtered_data.empty:
-        fig = px.choropleth(
-            data_frame=filtered_data,
-            locations="Country",
-            locationmode="country names",
-            color="Incidents",
-            title="Terrorism Incidents by Country",
-            color_continuous_scale="purples",
-            template="plotly_dark"
-        )
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.warning("No data available for the selected region.")
 
     # 📊 Insights from dataset
     st.subheader(f"Insights for {selected_country}:")
@@ -256,6 +256,7 @@ if page == "Overview":
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
+
 
 
 
