@@ -192,52 +192,43 @@ if page == "Introduction":
 
 
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
 
-# Page Title
-st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
 
-# Compute Key Stats
-total_incidents = data["Incidents"].sum()
-affected_countries = data["Country"].nunique()
-total_fatalities = data["Fatalities"].sum()
-total_injuries = data["Injuries"].sum()
-total_hostages = data["Hostages"].sum()
 
-# Display Metrics
-col1, col2, col3 = st.columns(3)
 
-with col1:
-    st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
-    st.metric(label="☠️ Total Fatalities", value=f"{total_fatalities:,}")
+# 📊 Overview Page
+if page == "Overview":
+    st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
 
-with col2:
-    st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
-    st.metric(label="🚑 Total Injuries", value=f"{total_injuries:,}")
+    # Quick Stats
+    total_incidents = data["Incidents"].sum()
+    affected_countries = data["Country"].nunique()
 
-with col3:
-    st.metric(label="🎭 Total Hostages Taken", value=f"{total_hostages:,}")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
+    
+    with col2:
+        st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
 
-# Dataset Overview
-st.subheader("Dataset Overview")
-st.write(data.head())
+    st.subheader("Dataset Overview")
+    st.write(data.head())
 
-# Trend of Incidents Over Time
-st.subheader("📈 Terrorism Incidents Trend (2012-2022)")
-incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
+# 📌 Top 10 Countries Page
+elif page == "Top 10 Countries":
+    st.markdown("<p class='title'>📌 Top 10 Countries Affected</p>", unsafe_allow_html=True)
 
-fig_trend = px.line(incidents_by_year, x="Year", y="Incidents", markers=True, title="Terrorism Incidents Over Time",
-                    labels={"Year": "Year", "Incidents": "Total Incidents"}, color_discrete_sequence=["red"])
-st.plotly_chart(fig_trend, use_container_width=True)
+    # Aggregating data to find top affected countries
+    country_counts = data.groupby("Country")["Incidents"].sum().reset_index()
+    top_countries = country_counts.sort_values(by="Incidents", ascending=False).head(10)
 
-# World Heatmap (Choropleth)
-st.subheader("🌍 Global Terrorism Intensity Map")
-fig_map = px.choropleth(data, locations="iso3c", color="Incidents",
-                         hover_name="Country", title="Global Terrorism Intensity",
-                         color_continuous_scale="Reds", projection="natural earth")
-st.plotly_chart(fig_map, use_container_width=True)
+    st.bar_chart(top_countries.set_index("Country"))  # Visualizing the top 10 countries
+
+    st.subheader("Top 10 Countries Data")
+    st.write(top_countries)
+
+
 
 # 🔥 Top 10 Countries Page
 elif page == "Top 10 Countries":
