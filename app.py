@@ -196,24 +196,39 @@ if page == "Introduction":
 
 
 
+
 # 📊 Overview Page
 if page == "Overview":
-    st.markdown("<p class='title'>📊 Overview of Global Terrorism</p>", unsafe_allow_html=True)
+    # Centered Title
+    st.markdown(
+        "<h1 style='text-align: center; color: #3366cc;'>📊 Overview of Global Terrorism</h1>",
+        unsafe_allow_html=True
+    )
 
-    # Quick Stats
+    # Quick Stats with Better Layout
     total_incidents = data["Incidents"].sum()
     affected_countries = data["Country"].nunique()
 
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
-    
-    with col2:
-        st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
+    with st.container():
+        col1, col2 = st.columns([1, 1], gap="large")
 
-    st.subheader("Dataset Overview")
-    st.write(data.head())
+        with col1:
+            st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
+
+        with col2:
+            st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
+
+    st.markdown("---")  # Adds a horizontal line
+
+    # Dataset Overview
+    st.subheader("📌 Dataset Preview")
+    st.dataframe(data.head(10), use_container_width=True)
+
+    st.markdown(
+        "<p style='text-align: center; color: gray;'>Source: Your Dataset Name</p>",
+        unsafe_allow_html=True
+    )
+
 
 # 📌 Top 10 Countries Page
 elif page == "Top 10 Countries":
