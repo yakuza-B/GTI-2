@@ -193,6 +193,8 @@ if page == "Introduction":
 
 
 
+
+
 # 📊 Overview Page
 if page == "Overview":
     # Centered Title
@@ -200,31 +202,29 @@ if page == "Overview":
 
     # 📍 Region Selection
     st.subheader("Select a Region")
+    
+    # Define the updated regions
     regions = {
-        "NA": "North America",
-        "EU": "Europe",
-        "SA": "South America",
-        "AF": "Africa",
-        "AS": "Asia"
+        "North America": ["United States", "Canada", "Mexico"],
+        "South America": ["Brazil", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Bolivia", "Paraguay", "Uruguay"],
+        "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands", "Sweden", "Poland", "Belgium", "Austria", "Switzerland", "Norway", "Denmark", "Finland", "Portugal", "Greece", "Czech Republic", "Hungary", "Ireland", "Slovakia", "Slovenia", "Romania", "Bulgaria", "Ukraine", "Russia"],
+        "Africa": ["Nigeria", "South Africa", "Egypt", "Kenya", "Ethiopia", "Ghana", "Sudan", "Uganda", "Algeria", "Morocco", "Tunisia", "Libya", "Congo", "Tanzania", "Zambia", "Zimbabwe"],
+        "Middle East": ["Iran", "Iraq", "Syria", "Saudi Arabia", "Yemen", "Israel", "Lebanon", "Jordan", "United Arab Emirates", "Kuwait", "Qatar", "Bahrain", "Oman"],
+        "Asia": ["China", "India", "Japan", "South Korea", "Indonesia", "Malaysia", "Thailand", "Vietnam", "Pakistan", "Bangladesh", "Philippines", "Myanmar", "Sri Lanka", "Nepal", "Kazakhstan", "Uzbekistan", "Afghanistan"],
+        "Oceania": ["Australia", "New Zealand", "Fiji", "Papua New Guinea"]
     }
-    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
+
+    # Create a selection box for regions
+    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True)
 
     # 📌 Country Selection
     selected_country = st.selectbox("Country Selection:", data["Country"].unique())
 
     # 🌍 Filter data based on selected region
-    region_countries = {
-        "NA": ["United States", "Canada", "Mexico"],
-        "EU": ["United Kingdom", "Germany", "France", "Italy", "Spain"],
-        "SA": ["Brazil", "Argentina", "Colombia", "Chile"],
-        "AF": ["South Africa", "Nigeria", "Egypt", "Kenya"],
-        "AS": ["China", "India", "Japan", "Indonesia"]
-    }
-    
-    filtered_data = data[data["Country"].isin(region_countries[selected_region])]
+    filtered_data = data[data["Country"].isin(regions[selected_region])]
 
     # 🌍 Generate Region-Specific Choropleth Map
-    st.subheader(f"Map of {regions[selected_region]}")
+    st.subheader(f"Map of {selected_region}")
     if not filtered_data.empty:
         fig = px.choropleth(
             data_frame=filtered_data,
@@ -253,6 +253,7 @@ if page == "Overview":
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
+
 
 
   
