@@ -195,6 +195,8 @@ if page == "Introduction":
 
 
 
+
+
 # 📊 Overview Page
 if page == "Overview":
     # Centered Title
@@ -217,11 +219,12 @@ if page == "Overview":
     # Create a selection box for regions
     selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True)
 
-    # 📌 Country Selection
-    selected_country = st.selectbox("Country Selection:", data["Country"].unique())
+    # 📌 Dynamically update country selection based on selected region
+    filtered_countries = regions[selected_region]
+    selected_country = st.selectbox("Country Selection:", filtered_countries)
 
     # 🌍 Filter data based on selected region
-    filtered_data = data[data["Country"].isin(regions[selected_region])]
+    filtered_data = data[data["Country"].isin(filtered_countries)]
 
     # 🌍 Generate Region-Specific Choropleth Map
     st.subheader(f"Map of {selected_region}")
