@@ -198,38 +198,46 @@ if page == "Overview":
     # Centered Title
     st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
 
-    # Quick Stats
-    total_incidents = data["Incidents"].sum()
-    affected_countries = data["Country"].nunique()
-
-    col1, col2 = st.columns([1, 1], gap="large")
-    with col1:
-        st.metric(label="Total Incidents", value=f"{total_incidents:,}")
-    with col2:
-        st.metric(label="Countries Affected", value=f"{affected_countries}")
-
-    st.markdown("---")  # Divider
-
     # 📍 Region Selection
     st.subheader("Select a Region")
-    regions = {"NA": "North America", "EU": "Europe", "SA": "South America", "AF": "Africa", "AS": "Asia"}
+    regions = {
+        "NA": "North America",
+        "EU": "Europe",
+        "SA": "South America",
+        "AF": "Africa",
+        "AS": "Asia"
+    }
     selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
 
     # 📌 Country Selection
     selected_country = st.selectbox("Country Selection:", data["Country"].unique())
 
-    # 🌍 Generate Choropleth Map
+    # 🌍 Filter data based on selected region
+    region_countries = {
+        "NA": ["United States", "Canada", "Mexico"],
+        "EU": ["United Kingdom", "Germany", "France", "Italy", "Spain"],
+        "SA": ["Brazil", "Argentina", "Colombia", "Chile"],
+        "AF": ["South Africa", "Nigeria", "Egypt", "Kenya"],
+        "AS": ["China", "India", "Japan", "Indonesia"]
+    }
+    
+    filtered_data = data[data["Country"].isin(region_countries[selected_region])]
+
+    # 🌍 Generate Region-Specific Choropleth Map
     st.subheader(f"Map of {regions[selected_region]}")
-    fig = px.choropleth(
-        data_frame=data,
-        locations="Country",
-        locationmode="country names",
-        color="Incidents",
-        title="Terrorism Incidents by Country",
-        color_continuous_scale="purples",
-        template="plotly_dark"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    if not filtered_data.empty:
+        fig = px.choropleth(
+            data_frame=filtered_data,
+            locations="Country",
+            locationmode="country names",
+            color="Incidents",
+            title="Terrorism Incidents by Country",
+            color_continuous_scale="purples",
+            template="plotly_dark"
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("No data available for the selected region.")
 
     # 📊 Insights from dataset
     st.subheader(f"Insights for {selected_country}:")
@@ -245,6 +253,7 @@ if page == "Overview":
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
+
 
   
 
