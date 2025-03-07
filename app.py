@@ -193,13 +193,6 @@ if page == "Introduction":
 
 
 
-
-
-
-
-
-
-
 # 📊 Overview Page
 if page == "Overview":
     # Centered Title
@@ -253,9 +246,7 @@ if page == "Overview":
 
     st.markdown("---")  # Divider
 
-    # Dataset Overview
-    st.subheader("📌 Dataset Preview")
-    st.dataframe(data.head(10), use_container_width=True)
+  
 
 
 # 📌 Top 10 Countries Page
