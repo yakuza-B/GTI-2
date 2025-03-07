@@ -197,37 +197,65 @@ if page == "Introduction":
 
 
 
+
+
+
 # 📊 Overview Page
 if page == "Overview":
     # Centered Title
-    st.markdown(
-        "<h1 style='text-align: center; color: #3366cc;'>📊 Overview of Global Terrorism</h1>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
 
-    # Quick Stats with Better Layout
+    # Quick Stats
     total_incidents = data["Incidents"].sum()
     affected_countries = data["Country"].nunique()
 
-    with st.container():
-        col1, col2 = st.columns([1, 1], gap="large")
+    col1, col2 = st.columns([1, 1], gap="large")
+    with col1:
+        st.metric(label="Total Incidents", value=f"{total_incidents:,}")
+    with col2:
+        st.metric(label="Countries Affected", value=f"{affected_countries}")
 
-        with col1:
-            st.metric(label="🌍 Total Incidents Recorded", value=f"{total_incidents:,}")
+    st.markdown("---")  # Divider
 
-        with col2:
-            st.metric(label="🗺️ Countries Affected", value=f"{affected_countries}")
+    # 📍 Region Selection
+    st.subheader("Select a Region")
+    regions = {"NA": "North America", "EU": "Europe", "SA": "South America", "AF": "Africa", "AS": "Asia"}
+    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
 
-    st.markdown("---")  # Adds a horizontal line
+    # 📌 Country Selection
+    selected_country = st.selectbox("Country Selection:", data["Country"].unique())
+
+    # 🌍 Generate Choropleth Map
+    st.subheader(f"Map of {regions[selected_region]}")
+    fig = px.choropleth(
+        data_frame=data,
+        locations="Country",
+        locationmode="country names",
+        color="Incidents",
+        title="Terrorism Incidents by Country",
+        color_continuous_scale="purples",
+        template="plotly_dark"
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    # 📊 Insights from dataset
+    st.subheader(f"Insights for {selected_country}:")
+    country_data = data[data["Country"] == selected_country]
+
+    if not country_data.empty:
+        incidents = country_data["Incidents"].sum()
+        most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
+
+        st.markdown(f"🛑 **Total Incidents**: {incidents:,}")
+        st.markdown(f"🔥 **Most Common Attack Type**: {most_common_attack}")
+    else:
+        st.warning("No data available for the selected country.")
+
+    st.markdown("---")  # Divider
 
     # Dataset Overview
     st.subheader("📌 Dataset Preview")
     st.dataframe(data.head(10), use_container_width=True)
-
-    st.markdown(
-        "<p style='text-align: center; color: gray;'>Source: Your Dataset Name</p>",
-        unsafe_allow_html=True
-    )
 
 
 # 📌 Top 10 Countries Page
