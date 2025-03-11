@@ -382,10 +382,8 @@ elif page == "Prediction":
         forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
         
         # Predict incidents and ensure no negative values
-        forecast_values = np.maximum(
-    fit.predict(start=len(incidents_by_year), end=len(incidents_by_year) + num_years_to_predict - 1), 
-    0
-)
+        forecast_values = np.maximum(fit.predict(start=len(incidents_by_year), end=len(incidents_by_year) + num_years_to_predict - 1), 0)
+
 
 
 
