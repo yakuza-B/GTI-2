@@ -7,7 +7,6 @@ from PIL import Image
 import base64
 import streamlit as st
 
-st.set_page_config(page_title="🔮 Terrorism Prediction", layout="wide")
 
 
 # Encode the image as base64
@@ -359,8 +358,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# Set Page Config
-st.set_page_config(page_title="🔮 Terrorism Prediction", layout="wide")
+
 
 # Encode Image as Base64 for Background Styling
 def get_base64_image(image_path):
