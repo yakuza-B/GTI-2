@@ -7,6 +7,9 @@ from PIL import Image
 import base64
 import streamlit as st
 
+st.set_page_config(page_title="🔮 Terrorism Prediction", layout="wide")
+
+
 # Encode the image as base64
 def get_base64_image(image_path):
     with open(image_path, "rb") as img_file:
