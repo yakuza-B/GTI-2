@@ -353,6 +353,22 @@ elif page == "Visualization":
 
 
 
+import streamlit as st
+import pickle
+import os
+
+# Define model file name
+model_filename = "model.pkl"
+
+# Load the model safely
+model = None  # Initialize as None to prevent NameError
+
+if os.path.exists(model_filename):
+    with open(model_filename, "rb") as model_file:
+        model = pickle.load(model_file)
+else:
+    st.error(f"⚠️ Model file '{model_filename}' not found. Please check the file path.")
+
 elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
 
@@ -368,33 +384,23 @@ elif page == "Prediction":
         st.error("⚠️ 'Country' column is missing in the dataset.")
         country = "Unknown"
 
-    # Convert Categorical Inputs to Numeric
-    if 'label_encoder' in globals():
-        try:
-            country_encoded = label_encoder.transform([country])[0]
-        except Exception as e:
-            st.error(f"⚠️ Encoding error: {e}")
-            country_encoded = 0
-    else:
-        st.warning("⚠️ Label encoder not found. Using default encoding.")
-        country_encoded = 0
+    # Convert Categorical Inputs to Numeric (if required by model)
+    country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
 
     # Prepare Feature Array
     input_features = np.array([[year, country_encoded]])
 
     # Predict Button
     if st.button("Predict Incident Trend"):
-        if model is not None:
-            try:
-                prediction = model.predict(input_features)
-                trend = "Increase" if prediction[0] > 0 else "Decrease"
-                st.success(f"Predicted Trend: {trend} in {year}")
-            except Exception as e:
-                st.error(f"⚠️ Prediction error: {e}")
+        if model is not None:  # Ensure model is loaded before predicting
+            prediction = model.predict(input_features)
+            trend = "Increase" if prediction[0] > 0 else "Decrease"
+            st.success(f"Predicted Trend: {trend} in {year}")
         else:
-            st.error("⚠️ Prediction model is not loaded. Please check the model file.")
+            st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
+
 
 
 
