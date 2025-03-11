@@ -351,20 +351,16 @@ elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
     
     st.subheader("Enter Details to Predict Incident Trends")
-    
+
     # User Input for Prediction
     year = st.number_input("Year", min_value=1970, max_value=2030, step=1, value=2025)
-    country = st.selectbox("Country", sorted(data["Country"].unique()))
-    target_type = st.selectbox("Target Type", sorted(data["Target Type"].unique()))
-    weapon_type = st.selectbox("Weapon Type", sorted(data["Weapon Type"].unique()))
+    country = st.selectbox("Country", sorted(data["Country"].unique())) if "Country" in data.columns else "Unknown"
     
     # Convert Categorical Inputs to Numeric (if required by model)
     country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
-    target_type_encoded = label_encoder.transform([target_type])[0] if 'label_encoder' in globals() else 0
-    weapon_type_encoded = label_encoder.transform([weapon_type])[0] if 'label_encoder' in globals() else 0
     
     # Prepare Feature Array
-    input_features = np.array([[year, country_encoded, target_type_encoded, weapon_type_encoded]])
+    input_features = np.array([[year, country_encoded]])
     
     # Predict Button
     if st.button("Predict Incident Trend"):
@@ -374,7 +370,7 @@ elif page == "Prediction":
             st.success(f"Predicted Trend: {trend} in {year}")
         else:
             st.error("Prediction model is not loaded. Please ensure the model is trained and available.")
-    
+
     st.markdown("---")  # Divider
 
 
