@@ -352,14 +352,17 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
-# \ud83d\udcca Prediction Page
 elif page == "Prediction":
     import matplotlib.pyplot as plt
+    import seaborn as sns
     import numpy as np
     from statsmodels.tsa.holtwinters import Holt
 
-    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    # Apply Seaborn theme for better aesthetics
+    sns.set_style("whitegrid")
+    sns.set_palette("Set2")
 
+    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
 
     # Country selection
@@ -388,29 +391,39 @@ elif page == "Prediction":
             num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
             last_year = incidents_by_year["Year"].max()
             forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-            
+
             # Ensure non-negative forecast values
             forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
 
             # Plot results
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], marker="o", label="Actual Data")
-            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", color="red", label="Fitted Trend")
-            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", color="green", label="Forecast")
-            ax.set_xlabel("Year")
-            ax.set_ylabel("Total Incidents")
-            ax.set_title(f"Incident Prediction for {selected_country} using Holt's Exponential Smoothing")
-            ax.legend()
-            ax.grid(True)
+            fig, ax = plt.subplots(figsize=(12, 6))
+
+            # Actual Data
+            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
+                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
+
+            # Fitted Trend
+            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
+                    color="red", label="Fitted Trend")
+
+            # Forecast
+            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
+                    linewidth=2, color="green", label="Forecast")
+
+            # Labels and Styling
+            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
+            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
+            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
+            ax.legend(fontsize=12)
+            ax.grid(alpha=0.3)
+
+            # Show plot in Streamlit
             st.pyplot(fig)
 
             # Display forecast values
             st.subheader(f"Predicted Incidents for {selected_country}:")
             predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
             st.dataframe(predictions)
-
-
-
 
 
 
