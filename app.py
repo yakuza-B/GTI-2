@@ -36,7 +36,7 @@ st.markdown("""
 
 # Sidebar Navigation
 st.sidebar.title("📍 Navigation")
-page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
+page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization", "Prediction"])
 
 
 if page == "About Us":
@@ -354,8 +354,6 @@ import plotly.express as px
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
-# 📌 Add "Prediction" to Page Options
-page = st.sidebar.radio("Choose a Page", ["Overview", "Top 10 Countries", "Data Exploration", "Visualization", "Prediction"])
 
 # 🔮 NEW PREDICTION PAGE
 if page == "Prediction":
