@@ -7,6 +7,8 @@ from PIL import Image
 import base64
 import streamlit as st
 from statsmodels.tsa.holtwinters import Holt
+import numpy as np
+    
 
 
 
@@ -352,11 +354,6 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 elif page == "Prediction":
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import numpy as np
-    from statsmodels.tsa.holtwinters import Holt
-
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
