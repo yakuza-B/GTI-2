@@ -351,6 +351,17 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
+
+
+# Load the model if not already loaded
+if 'model' not in globals():
+    try:
+        with open("model.pkl", "rb") as model_file:
+            model = pickle.load(model_file)
+    except Exception as e:
+        model = None
+        st.error(f"⚠️ Model loading failed: {e}")
+
 elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
 
@@ -366,22 +377,34 @@ elif page == "Prediction":
         st.error("⚠️ 'Country' column is missing in the dataset.")
         country = "Unknown"
 
-    # Convert Categorical Inputs to Numeric (if required by model)
-    country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
+    # Convert Categorical Inputs to Numeric
+    if 'label_encoder' in globals():
+        try:
+            country_encoded = label_encoder.transform([country])[0]
+        except Exception as e:
+            st.error(f"⚠️ Encoding error: {e}")
+            country_encoded = 0
+    else:
+        st.warning("⚠️ Label encoder not found. Using default encoding.")
+        country_encoded = 0
 
     # Prepare Feature Array
     input_features = np.array([[year, country_encoded]])
 
     # Predict Button
     if st.button("Predict Incident Trend"):
-        if 'model' in globals():
-            prediction = model.predict(input_features)
-            trend = "Increase" if prediction[0] > 0 else "Decrease"
-            st.success(f"Predicted Trend: {trend} in {year}")
+        if model is not None:
+            try:
+                prediction = model.predict(input_features)
+                trend = "Increase" if prediction[0] > 0 else "Decrease"
+                st.success(f"Predicted Trend: {trend} in {year}")
+            except Exception as e:
+                st.error(f"⚠️ Prediction error: {e}")
         else:
-            st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
+            st.error("⚠️ Prediction model is not loaded. Please check the model file.")
 
     st.markdown("---")  # Divider
+
 
 
 
