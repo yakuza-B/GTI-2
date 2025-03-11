@@ -8,6 +8,7 @@ import base64
 import streamlit as st
 import numpy as np
 import pickle
+import os
 
 
 
@@ -352,10 +353,6 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
-
-import streamlit as st
-import pickle
-import os
 
 # Define model file name
 model_filename = "model.pkl"
