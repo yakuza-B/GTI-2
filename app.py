@@ -360,12 +360,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 
-# Encode Image as Base64 for Background Styling
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
 
-image_base64 = get_base64_image("terrorism_banner.jpg")
 
 # Custom CSS for Dark Theme Styling
 st.markdown(
