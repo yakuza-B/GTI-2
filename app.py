@@ -351,15 +351,17 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
+
+
 elif page == "Prediction":
     import matplotlib.pyplot as plt
     import seaborn as sns
     import numpy as np
     from statsmodels.tsa.holtwinters import Holt
 
-    # Apply dark theme for better contrast
-    sns.set_style("darkgrid")
-    sns.set_palette("deep")
+    # Apply Seaborn theme for better aesthetics
+    sns.set_style("whitegrid")
+    sns.set_palette("Set2")
 
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
@@ -394,32 +396,27 @@ elif page == "Prediction":
             # Ensure non-negative forecast values
             forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
 
-            # Plot results with dark background
+            # Plot results
             fig, ax = plt.subplots(figsize=(12, 6))
-            fig.patch.set_facecolor("#1E1E1E")  # Dark figure background
-            ax.set_facecolor("#1E1E1E")  # Dark plot background
 
             # Actual Data
             ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#FFDD44")
+                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
 
             # Fitted Trend
             ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
-                    color="#FF5733", label="Fitted Trend")
+                    color="red", label="Fitted Trend")
 
             # Forecast
             ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                    linewidth=2, color="#33FF99", label="Forecast")
+                    linewidth=2, color="green", label="Forecast")
 
             # Labels and Styling
-            ax.set_xlabel("Year", fontsize=14, fontweight="bold", color="white")
-            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold", color="white")
-            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold", color="white")
-            ax.legend(fontsize=12, facecolor="#333333", edgecolor="white")
-            ax.grid(color="#555555", linestyle="dotted", alpha=0.5)
-
-            # Change tick colors
-            ax.tick_params(axis='both', colors='white')
+            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
+            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
+            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
+            ax.legend(fontsize=12)
+            ax.grid(alpha=0.3)
 
             # Show plot in Streamlit
             st.pyplot(fig)
