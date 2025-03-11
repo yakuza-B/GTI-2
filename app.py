@@ -352,46 +352,49 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
+# 📊 Prediction Page
 elif page == "Prediction":
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
 
-    # Ensure 'Year' is treated as an integer
-    data['Year'] = data['Year'].astype(int)
+    # Country selection
+    selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
 
-    # Group by Year and sum incidents
-    incidents_by_year = data.groupby('Year')['Incidents'].sum().reset_index()
+    # Filter data by the selected country
+    country_data = data[data["Country"] == selected_country]
 
-    # Fit the Holt model
-    model = Holt(incidents_by_year["Incidents"])
-    fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
+    if country_data.empty:
+        st.warning("No data available for the selected country.")
+    else:
+        # Group by Year and sum incidents
+        incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
 
-    # User input for number of years to predict
-    num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
-    last_year = incidents_by_year["Year"].max()
-    forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-    forecast_values = fit.forecast(len(forecast_years))
+        # Fit the Holt model
+        model = Holt(incidents_by_year["Incidents"])
+        fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
 
-    # Plot results
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], marker="o", label="Actual Data")
-    ax.plot(incidents_by_year["Year"], fit.fittedvalues, linestyle="dashed", color="red", label="Fitted Trend")
-    ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", color="green", label="Forecast")
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Total Incidents")
-    ax.set_title("Incident Prediction using Holt's Exponential Smoothing")
-    ax.legend()
-    ax.grid(True)
-    st.pyplot(fig)
+        # User input for number of years to predict
+        num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
+        last_year = incidents_by_year["Year"].max()
+        forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
+        forecast_values = fit.forecast(len(forecast_years))
 
-    # Display forecast values
-    st.subheader("Predicted Incidents:")
-    predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
-    st.dataframe(predictions)
+        # Plot results
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], marker="o", label="Actual Data")
+        ax.plot(incidents_by_year["Year"], fit.fittedvalues, linestyle="dashed", color="red", label="Fitted Trend")
+        ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", color="green", label="Forecast")
+        ax.set_xlabel("Year")
+        ax.set_ylabel("Total Incidents")
+        ax.set_title(f"Incident Prediction for {selected_country} using Holt's Exponential Smoothing")
+        ax.legend()
+        ax.grid(True)
+        st.pyplot(fig)
 
-
-
-
+        # Display forecast values
+        st.subheader(f"Predicted Incidents for {selected_country}:")
+        predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
+        st.dataframe(predictions)
 
 
 
