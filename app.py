@@ -6,6 +6,8 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
+import numpy
+import pickle
 
 
 
@@ -349,11 +351,7 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
-
-import numpy as np
-import pickle  # For loading the trained model
-
-elif page == "Prediction":  # ✅ Now correctly structured
+elif page == "Prediction":  # ✅ Now correctly follows an `if` statement
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
 
     st.subheader("Enter Details to Predict Incident Trends")
@@ -369,10 +367,7 @@ elif page == "Prediction":  # ✅ Now correctly structured
         country = "Unknown"
 
     # Convert Categorical Inputs to Numeric (if required by model)
-    if 'label_encoder' in globals():
-        country_encoded = label_encoder.transform([country])[0]
-    else:
-        country_encoded = 0  # Default encoding if not available
+    country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
 
     # Prepare Feature Array
     input_features = np.array([[year, country_encoded]])
@@ -387,8 +382,6 @@ elif page == "Prediction":  # ✅ Now correctly structured
             st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
-
-
 
 
 
