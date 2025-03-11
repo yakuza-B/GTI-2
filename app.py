@@ -357,7 +357,7 @@ elif page == "Prediction":
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
 
     # Country selection
-    unique_countries = sorted(data["Country"].unique())  # Get unique countries in alphabetical order
+    unique_countries = sorted(data["Country"].unique())  
     selected_country = st.selectbox("Select a Country:", unique_countries)
 
     # Filter data based on the selected country
@@ -380,7 +380,9 @@ elif page == "Prediction":
         num_years_to_predict = st.slider("Select number of years to predict:", 1, 5, 3)
         last_year = incidents_by_year["Year"].max()
         forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-        forecast_values = fit.forecast(len(forecast_years))
+        
+        # Predict incidents and ensure no negative values
+        forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
 
         # Plot results
         fig, ax = plt.subplots(figsize=(10, 6))
