@@ -351,7 +351,7 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
-elif page == "Prediction":  # ✅ Now correctly follows an `if` statement
+elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
 
     st.subheader("Enter Details to Predict Incident Trends")
@@ -374,7 +374,7 @@ elif page == "Prediction":  # ✅ Now correctly follows an `if` statement
 
     # Predict Button
     if st.button("Predict Incident Trend"):
-        if model:
+        if 'model' in globals():
             prediction = model.predict(input_features)
             trend = "Increase" if prediction[0] > 0 else "Decrease"
             st.success(f"Predicted Trend: {trend} in {year}")
@@ -382,6 +382,7 @@ elif page == "Prediction":  # ✅ Now correctly follows an `if` statement
             st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
+
 
 
 
