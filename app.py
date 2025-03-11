@@ -352,8 +352,6 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
-
-
 # Define model file name
 model_filename = "model.pkl"
 
@@ -397,6 +395,10 @@ elif page == "Prediction":
             st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
+
+
+
+
 
 
 
