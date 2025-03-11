@@ -6,7 +6,7 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
-import numpy
+import numpy as np
 import pickle
 
 
