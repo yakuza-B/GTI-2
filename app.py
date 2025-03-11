@@ -349,29 +349,30 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
+
 import numpy as np
 import pickle  # For loading the trained model
 
-elif page == "Prediction":
+elif page == "Prediction":  # ✅ Now correctly structured
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
 
     st.subheader("Enter Details to Predict Incident Trends")
 
-    # Load the trained model
-    model_path = "trained_model.pkl"  # Change this to the actual path of your model
-    try:
-        with open(model_path, "rb") as file:
-            model = pickle.load(file)
-    except FileNotFoundError:
-        model = None
-        st.error("⚠️ Trained model not found. Please upload or train the model first.")
-
     # User Input for Prediction
     year = st.number_input("Year", min_value=1970, max_value=2030, step=1, value=2025)
-    country = st.selectbox("Country", sorted(data["Country"].unique())) if "Country" in data.columns else "Unknown"
+
+    # Ensure "Country" exists in the dataset
+    if "Country" in data.columns:
+        country = st.selectbox("Country", sorted(data["Country"].unique()))
+    else:
+        st.error("⚠️ 'Country' column is missing in the dataset.")
+        country = "Unknown"
 
     # Convert Categorical Inputs to Numeric (if required by model)
-    country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
+    if 'label_encoder' in globals():
+        country_encoded = label_encoder.transform([country])[0]
+    else:
+        country_encoded = 0  # Default encoding if not available
 
     # Prepare Feature Array
     input_features = np.array([[year, country_encoded]])
@@ -386,7 +387,6 @@ elif page == "Prediction":
             st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
-
 
 
 
