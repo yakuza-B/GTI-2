@@ -381,13 +381,8 @@ elif page == "Prediction":
         last_year = incidents_by_year["Year"].max()
         forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
         
-        # Fit the model
-model = ExponentialSmoothing(incidents_by_year["Incidents"], trend="add", seasonal=None)
-fit = model.fit()
-
-# Predict the next 5 years
-num_years_to_predict = 5
-forecast_values = np.maximum(fit.forecast(steps=num_years_to_predict), 0)
+        
+        forecast_values = np.maximum(fit.forecast(steps=num_years_to_predict), 0)
 
 
 
