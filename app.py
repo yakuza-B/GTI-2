@@ -356,67 +356,85 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# Load Data
-data = pd.read_csv("Global Terrorism Index 2023.csv")
-data.columns = data.columns.str.strip()  # Remove any spaces in column names
+# Set Page Config
+st.set_page_config(page_title="🔮 Terrorism Prediction", layout="wide")
 
-# 🔮 NEW PREDICTION PAGE
-page = "Prediction"
+# Encode Image as Base64 for Background Styling
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
-if page == "Prediction":
-    st.markdown("<h1>🔮 Terrorism Prediction for Next 3 Years</h1>", unsafe_allow_html=True)
+image_base64 = get_base64_image("terrorism_banner.jpg")
 
-    # 🎯 Select Country for Prediction
-    country_input = st.selectbox("Select Country", data["Country"].unique())
+# Custom CSS for Dark Theme Styling
+st.markdown(
+    f"""
+    <style>
+    body {{ background-color: #121212; color: white; }}
+    .stApp {{ background: url("data:image/png;base64,{image_base64}") no-repeat center top; }}
+    h1 {{ color: #FFD700; text-align: center; }}
+    .stMarkdown, .stSelectbox, .stButton {{ font-size: 18px; }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-    # 📊 Prepare Data for Machine Learning
-    features = ["Year", "Country", "Incidents"]
-    df_ml = data[features]
+# Main Title
+st.markdown("<h1>🔮 Global Terrorism Prediction (Next 3 Years)</h1>", unsafe_allow_html=True)
 
-    # Use only the last 10 years for better trend analysis
-    df_ml = df_ml[df_ml["Year"] >= (df_ml["Year"].max() - 10)]
+# Feature Explanation
+st.markdown(
+    """
+    In this section, we predict the **incidents of terrorism** in different countries based on historical trends. 
+    - 📍 **Country:** Select a country for prediction
+    - 📅 **Year:** Predict terrorism incidents for the next 3 years
+    - 📊 **Incidents:** Estimated future attack count
+    
+    *Note: Predictions are based on available historical data and machine learning models.*
+    """, unsafe_allow_html=True
+)
 
-    # Convert categorical "Country" into numerical values
-    df_ml = pd.get_dummies(df_ml, columns=["Country"], drop_first=True)
+# User Inputs
+country_input = st.selectbox("🌍 Select Country:", data["Country"].unique())
 
-    # Scale the Year column to help the model detect trends
-    scaler = StandardScaler()
-    df_ml["Year"] = scaler.fit_transform(df_ml[["Year"]])
+# Machine Learning Model Setup
+features = ["Year", "Country", "Incidents"]
+df_ml = data[features]
 
-    # Split into training & test sets
-    X = df_ml.drop(columns=["Incidents"])
-    y = df_ml["Incidents"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# One-Hot Encode Country
+df_ml = pd.get_dummies(df_ml, columns=["Country"], drop_first=True)
 
-    # Train **Linear Regression** for better trend analysis
-    model = LinearRegression()
-    model.fit(X_train, y_train)
+# Train/Test Split
+X = df_ml.drop(columns=["Incidents"])
+y = df_ml["Incidents"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # 🔮 Predict Future Incidents (Next 3 Years)
-    future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
-    future_years_scaled = scaler.transform(future_years)  # Scale future years
+# Train Model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
-    # Prepare future data
-    future_data = pd.DataFrame({"Year": future_years_scaled.flatten()})
-    for col in df_ml.columns:
-        if col not in ["Year", "Incidents"]:
-            future_data[col] = 0  # Default to 0 (not selected)
+# Predict Next 3 Years (2025-2027)
+future_years = np.arange(2025, 2028)
+future_data = pd.DataFrame({"Year": future_years})
 
-    # Encode the selected country
-    country_col = f"Country_{country_input}"
-    if country_col in future_data.columns:
-        future_data[country_col] = 1
+for col in df_ml.columns:
+    if col not in ["Year", "Incidents"]:
+        future_data[col] = 0  # Default to 0
 
-    # Predict incidents
-    future_predictions = model.predict(future_data)
+country_col = f"Country_{country_input}"
+if country_col in future_data.columns:
+    future_data[country_col] = 1
 
-    # 📈 Display Prediction Results
-    prediction_df = pd.DataFrame({"Year": [2025, 2026, 2027], "Predicted Incidents": future_predictions})
-    st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2027)")
+future_predictions = model.predict(future_data)
 
-    # Show predictions as a line chart
-    fig = px.line(prediction_df, x="Year", y="Predicted Incidents", markers=True, title="Future Trend")
-    st.plotly_chart(fig)
+# Display Predictions
+prediction_df = pd.DataFrame({"Year": future_years, "Predicted Incidents": future_predictions})
+st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2027)")
+
+# Line Chart for Predictions
+fig = px.line(prediction_df, x="Year", y="Predicted Incidents", markers=True, title="Future Trend of Terrorism")
+st.plotly_chart(fig)
+
 
 
 
