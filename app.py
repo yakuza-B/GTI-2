@@ -352,40 +352,32 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
+# 📊 Prediction Page
 elif page == "Prediction":
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
 
     # Country selection
-    unique_countries = sorted(data["Country"].unique())  
-    selected_country = st.selectbox("Select a Country:", unique_countries)
+    selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
 
-    # Filter data based on the selected country
+    # Filter data by the selected country
     country_data = data[data["Country"] == selected_country]
 
     if country_data.empty:
-        st.warning(f"No data available for {selected_country}. Please select another country.")
+        st.warning("No data available for the selected country.")
     else:
-        # Ensure 'Year' is treated as an integer
-        country_data['Year'] = country_data['Year'].astype(int)
-
         # Group by Year and sum incidents
-        incidents_by_year = country_data.groupby('Year')['Incidents'].sum().reset_index()
+        incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
 
         # Fit the Holt model
         model = Holt(incidents_by_year["Incidents"])
         fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
 
-        # User input for number of years to predict (max 5 years)
-        num_years_to_predict = st.slider("Select number of years to predict:", 1, 5, 3)
+        # User input for number of years to predict
+        num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
         last_year = incidents_by_year["Year"].max()
         forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-        
-        
-        forecast_values = np.maximum(fit.forecast(steps=num_years_to_predict), 0)
-
-
-
+        forecast_values = fit.forecast(len(forecast_years))
 
         # Plot results
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -403,12 +395,6 @@ elif page == "Prediction":
         st.subheader(f"Predicted Incidents for {selected_country}:")
         predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
         st.dataframe(predictions)
-
-
-
-
-
-
 
 
 
