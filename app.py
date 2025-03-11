@@ -274,12 +274,6 @@ if page == "Overview":
 
 
 elif page == "EDA":
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import plotly.express as px
-    import pandas as pd
-    import streamlit as st
-
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
