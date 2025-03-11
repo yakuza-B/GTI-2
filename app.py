@@ -351,17 +351,14 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
-
-
 elif page == "Prediction":
     import matplotlib.pyplot as plt
     import seaborn as sns
     import numpy as np
     from statsmodels.tsa.holtwinters import Holt
 
-    # Apply Seaborn theme for better aesthetics
-    sns.set_style("whitegrid")
-    sns.set_palette("Set2")
+    # Apply dark theme
+    plt.style.use("dark_background")
 
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
@@ -396,27 +393,31 @@ elif page == "Prediction":
             # Ensure non-negative forecast values
             forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
 
-            # Plot results
+            # Create a figure
             fig, ax = plt.subplots(figsize=(12, 6))
 
-            # Actual Data
-            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
+            # Scatter plot for actual data
+            sns.scatterplot(x=incidents_by_year["Year"], y=incidents_by_year["Incidents"], 
+                            color="#00CFFF", s=100, label="Actual Data", edgecolor="white")
 
-            # Fitted Trend
-            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
-                    color="red", label="Fitted Trend")
+            # Trend line for fitted values
+            sns.lineplot(x=incidents_by_year["Year"], y=fitted_values, 
+                         color="#FF4C4C", linestyle="solid", linewidth=2, label="Fitted Trend")
 
-            # Forecast
-            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                    linewidth=2, color="green", label="Forecast")
+            # Scatter plot for predicted values
+            sns.scatterplot(x=forecast_years, y=forecast_values, 
+                            color="#FF00FF", s=100, label="Predicted Data", edgecolor="white")
+
+            # Trend line for predictions
+            sns.lineplot(x=forecast_years, y=forecast_values, 
+                         color="#00FF00", linestyle="dashed", linewidth=2, label="Forecast Trend")
 
             # Labels and Styling
-            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
-            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
-            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
-            ax.legend(fontsize=12)
-            ax.grid(alpha=0.3)
+            ax.set_xlabel("Year", fontsize=14, fontweight="bold", color="white")
+            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold", color="white")
+            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold", color="white")
+            ax.legend(fontsize=12, facecolor="#1E1E1E", framealpha=0.8)
+            ax.grid(alpha=0.3, color="gray")
 
             # Show plot in Streamlit
             st.pyplot(fig)
@@ -425,6 +426,8 @@ elif page == "Prediction":
             st.subheader(f"Predicted Incidents for {selected_country}:")
             predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
             st.dataframe(predictions)
+
+
 
 
 
