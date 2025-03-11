@@ -6,8 +6,7 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
-import numpy as np
-import pickle
+
 
 
 
@@ -350,31 +349,44 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
+import numpy as np
+import pickle  # For loading the trained model
+
 elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
-    
+
     st.subheader("Enter Details to Predict Incident Trends")
+
+    # Load the trained model
+    model_path = "trained_model.pkl"  # Change this to the actual path of your model
+    try:
+        with open(model_path, "rb") as file:
+            model = pickle.load(file)
+    except FileNotFoundError:
+        model = None
+        st.error("⚠️ Trained model not found. Please upload or train the model first.")
 
     # User Input for Prediction
     year = st.number_input("Year", min_value=1970, max_value=2030, step=1, value=2025)
     country = st.selectbox("Country", sorted(data["Country"].unique())) if "Country" in data.columns else "Unknown"
-    
+
     # Convert Categorical Inputs to Numeric (if required by model)
     country_encoded = label_encoder.transform([country])[0] if 'label_encoder' in globals() else 0
-    
+
     # Prepare Feature Array
     input_features = np.array([[year, country_encoded]])
-    
+
     # Predict Button
     if st.button("Predict Incident Trend"):
-        if 'model' in globals():
+        if model:
             prediction = model.predict(input_features)
             trend = "Increase" if prediction[0] > 0 else "Decrease"
             st.success(f"Predicted Trend: {trend} in {year}")
         else:
-            st.error("Prediction model is not loaded. Please ensure the model is trained and available.")
+            st.error("⚠️ Prediction model is not loaded. Please ensure the model is trained and available.")
 
     st.markdown("---")  # Divider
+
 
 
 
