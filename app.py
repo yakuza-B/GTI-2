@@ -352,16 +352,16 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
-
-# Ensure column names don't have spaces
-data.columns = data.columns.str.strip()
+data.columns = data.columns.str.strip()  # Remove any spaces in column names
 
 # 🔮 NEW PREDICTION PAGE
-page = "Prediction"  # Ensure this variable is set correctly
+page = "Prediction"
 
 if page == "Prediction":
     st.markdown("<h1>🔮 Terrorism Prediction for Next 3 Years</h1>", unsafe_allow_html=True)
@@ -370,32 +370,34 @@ if page == "Prediction":
     country_input = st.selectbox("Select Country", data["Country"].unique())
 
     # 📊 Prepare Data for Machine Learning
-    features = ["Year", "Country", "Incidents"]  # Keeping only relevant columns
+    features = ["Year", "Country", "Incidents"]
     df_ml = data[features]
 
-    # Filter for last 10 years (for better predictions)
+    # Use only the last 10 years for better trend analysis
     df_ml = df_ml[df_ml["Year"] >= (df_ml["Year"].max() - 10)]
 
-    # Convert categorical "Country" into numerical values (one-hot encoding)
+    # Convert categorical "Country" into numerical values
     df_ml = pd.get_dummies(df_ml, columns=["Country"], drop_first=True)
 
-    # Apply log transformation to "Incidents" (if needed)
-    df_ml["Incidents"] = np.log1p(df_ml["Incidents"])  # log(1 + x) to prevent log(0) issues
+    # Scale the Year column to help the model detect trends
+    scaler = StandardScaler()
+    df_ml["Year"] = scaler.fit_transform(df_ml[["Year"]])
 
     # Split into training & test sets
     X = df_ml.drop(columns=["Incidents"])
     y = df_ml["Incidents"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Train Model with More Trees for Better Accuracy
-    model = RandomForestRegressor(n_estimators=200, random_state=42)
+    # Train **Linear Regression** for better trend analysis
+    model = LinearRegression()
     model.fit(X_train, y_train)
 
     # 🔮 Predict Future Incidents (Next 3 Years)
-    future_years = np.arange(2025, 2028)  # 2025 to 2027
-    future_data = pd.DataFrame({"Year": future_years})
+    future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
+    future_years_scaled = scaler.transform(future_years)  # Scale future years
 
-    # Add selected Country as features
+    # Prepare future data
+    future_data = pd.DataFrame({"Year": future_years_scaled.flatten()})
     for col in df_ml.columns:
         if col not in ["Year", "Incidents"]:
             future_data[col] = 0  # Default to 0 (not selected)
@@ -408,15 +410,13 @@ if page == "Prediction":
     # Predict incidents
     future_predictions = model.predict(future_data)
 
-    # Reverse log transformation (to get actual values)
-    future_predictions = np.expm1(future_predictions)  
-
     # 📈 Display Prediction Results
-    prediction_df = pd.DataFrame({"Year": future_years, "Predicted Incidents": future_predictions})
+    prediction_df = pd.DataFrame({"Year": [2025, 2026, 2027], "Predicted Incidents": future_predictions})
     st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2027)")
 
     # Show predictions as a line chart
     fig = px.line(prediction_df, x="Year", y="Predicted Incidents", markers=True, title="Future Trend")
     st.plotly_chart(fig)
+
 
 
