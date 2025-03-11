@@ -352,15 +352,6 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
-import pickle
-# Load the model if not already loaded
-if 'model' not in globals():
-    try:
-        with open("model.pkl", "rb") as model_file:
-            model = pickle.load(model_file)
-    except Exception as e:
-        model = None
-        st.error(f"⚠️ Model loading failed: {e}")
 
 elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
