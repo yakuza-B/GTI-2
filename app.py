@@ -354,21 +354,27 @@ import plotly.express as px
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
+# Load Data
+data = pd.read_csv("Global Terrorism Index 2023.csv")
+
+# Ensure column names don't have spaces
+data.columns = data.columns.str.strip()
 
 # 🔮 NEW PREDICTION PAGE
+page = "Prediction"  # Ensure this variable is set correctly
+
 if page == "Prediction":
     st.markdown("<h1>🔮 Terrorism Prediction for Next 5 Years</h1>", unsafe_allow_html=True)
 
-    # 🎯 Select Country & Attack Type for Prediction
+    # 🎯 Select Country for Prediction
     country_input = st.selectbox("Select Country", data["Country"].unique())
-    attack_type_input = st.selectbox("Select Attack Type", data["Attack Type"].unique())
 
     # 📊 Prepare Data for Machine Learning
-    features = ["Year", "Country", "Attack Type", "Incidents"]
+    features = ["Year", "Country", "Incidents"]  # Remove "Attack Type"
     df_ml = data[features]
 
-    # Convert categorical variables into numbers
-    df_ml = pd.get_dummies(df_ml, columns=["Country", "Attack Type"], drop_first=True)
+    # Convert categorical "Country" into numerical values (one-hot encoding)
+    df_ml = pd.get_dummies(df_ml, columns=["Country"], drop_first=True)
 
     # Split into training & test sets
     X = df_ml.drop(columns=["Incidents"])
@@ -380,33 +386,30 @@ if page == "Prediction":
     model.fit(X_train, y_train)
 
     # 🔮 Predict Future Incidents (Next 5 Years)
-    future_years = np.arange(2025, 2031)  # 2025 to 2030
+    future_years = np.arange(2025, 2030)  # 2025 to 2029 (5 years)
     future_data = pd.DataFrame({"Year": future_years})
-    
-    # Add selected Country & Attack Type as features
+
+    # Add selected Country as features
     for col in df_ml.columns:
         if col not in ["Year", "Incidents"]:
             future_data[col] = 0  # Default to 0 (not selected)
-    
-    # Encode the selected country & attack type
-    country_col = f"Country_{country_input}"
-    attack_col = f"Attack Type_{attack_type_input}"
 
+    # Encode the selected country
+    country_col = f"Country_{country_input}"
     if country_col in future_data.columns:
         future_data[country_col] = 1
-    if attack_col in future_data.columns:
-        future_data[attack_col] = 1
 
     # Predict incidents
     future_predictions = model.predict(future_data)
 
     # 📈 Display Prediction Results
     prediction_df = pd.DataFrame({"Year": future_years, "Predicted Incidents": future_predictions})
-    st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2030)")
-    
+    st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2029)")
+
     # Show predictions as a line chart
     fig = px.line(prediction_df, x="Year", y="Predicted Incidents", markers=True, title="Future Trend")
     st.plotly_chart(fig)
+
 
     # 📌 Show data as a table
     st.dataframe(prediction_df)
