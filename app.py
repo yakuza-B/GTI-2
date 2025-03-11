@@ -358,7 +358,8 @@ elif page == "Prediction":
     import numpy as np
     from statsmodels.tsa.holtwinters import Holt
 
-    st.markdown("<p class='title'>\ud83d\udcc8 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+
     st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
 
     # Country selection
