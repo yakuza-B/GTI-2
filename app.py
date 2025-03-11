@@ -364,29 +364,35 @@ data.columns = data.columns.str.strip()
 page = "Prediction"  # Ensure this variable is set correctly
 
 if page == "Prediction":
-    st.markdown("<h1>🔮 Terrorism Prediction for Next 5 Years</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>🔮 Terrorism Prediction for Next 3 Years</h1>", unsafe_allow_html=True)
 
     # 🎯 Select Country for Prediction
     country_input = st.selectbox("Select Country", data["Country"].unique())
 
     # 📊 Prepare Data for Machine Learning
-    features = ["Year", "Country", "Incidents"]  # Remove "Attack Type"
+    features = ["Year", "Country", "Incidents"]  # Keeping only relevant columns
     df_ml = data[features]
+
+    # Filter for last 10 years (for better predictions)
+    df_ml = df_ml[df_ml["Year"] >= (df_ml["Year"].max() - 10)]
 
     # Convert categorical "Country" into numerical values (one-hot encoding)
     df_ml = pd.get_dummies(df_ml, columns=["Country"], drop_first=True)
+
+    # Apply log transformation to "Incidents" (if needed)
+    df_ml["Incidents"] = np.log1p(df_ml["Incidents"])  # log(1 + x) to prevent log(0) issues
 
     # Split into training & test sets
     X = df_ml.drop(columns=["Incidents"])
     y = df_ml["Incidents"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Train Model
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    # Train Model with More Trees for Better Accuracy
+    model = RandomForestRegressor(n_estimators=200, random_state=42)
     model.fit(X_train, y_train)
 
-    # 🔮 Predict Future Incidents (Next 5 Years)
-    future_years = np.arange(2025, 2030)  # 2025 to 2029 (5 years)
+    # 🔮 Predict Future Incidents (Next 3 Years)
+    future_years = np.arange(2025, 2028)  # 2025 to 2027
     future_data = pd.DataFrame({"Year": future_years})
 
     # Add selected Country as features
@@ -402,15 +408,15 @@ if page == "Prediction":
     # Predict incidents
     future_predictions = model.predict(future_data)
 
+    # Reverse log transformation (to get actual values)
+    future_predictions = np.expm1(future_predictions)  
+
     # 📈 Display Prediction Results
     prediction_df = pd.DataFrame({"Year": future_years, "Predicted Incidents": future_predictions})
-    st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2029)")
+    st.subheader(f"📊 Predicted Terrorism Incidents in {country_input} (2025-2027)")
 
     # Show predictions as a line chart
     fig = px.line(prediction_df, x="Year", y="Predicted Incidents", markers=True, title="Future Trend")
     st.plotly_chart(fig)
 
-
-    # 📌 Show data as a table
-    st.dataframe(prediction_df)
 
