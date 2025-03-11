@@ -352,7 +352,7 @@ elif page == "Visualization":
     st.plotly_chart(fig)
 
 
-
+import pickle
 # Load the model if not already loaded
 if 'model' not in globals():
     try:
