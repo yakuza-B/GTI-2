@@ -6,6 +6,7 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
+from statsmodels.tsa.holtwinters import Holt
 
 
 
@@ -350,12 +351,6 @@ elif page == "Visualization":
                         projection="natural earth")
     st.plotly_chart(fig)
 
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-from statsmodels.tsa.holtwinters import Holt
-
-
 
 elif page == "Prediction":
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
@@ -393,6 +388,11 @@ elif page == "Prediction":
     st.subheader("Predicted Incidents:")
     predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
     st.dataframe(predictions)
+
+
+
+
+
 
 
 
