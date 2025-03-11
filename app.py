@@ -358,11 +358,6 @@ model_filename = "model.pkl"
 # Load the model safely
 model = None  # Initialize as None to prevent NameError
 
-if os.path.exists(model_filename):
-    with open(model_filename, "rb") as model_file:
-        model = pickle.load(model_file)
-else:
-    st.error(f"⚠️ Model file '{model_filename}' not found. Please check the file path.")
 
 elif page == "Prediction":
     st.markdown("<h1 class='title'>🔮 Terrorism Incident Prediction</h1>", unsafe_allow_html=True)
