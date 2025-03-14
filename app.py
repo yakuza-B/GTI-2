@@ -30,8 +30,7 @@ data = pd.read_csv("Global Terrorism Index 2023.csv")
 
 
 
-# Get the region for the selected country
-selected_region = data[data["Country"] == selected_country]["Region"].iloc[0]
+
 
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
@@ -375,6 +374,12 @@ if page == "Prediction":
     to forecast the number of incidents.
     """)
 
+    # Load the dataset with the 'Region' column
+    data = pd.read_csv("Global_Terrorism_Index_2023_with_regions.csv")
+    
+
+    # Get the region for the selected country
+    selected_region = data[data["Country"] == selected_country]["Region"].iloc[0]
     # Country selection
     selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
 
