@@ -367,9 +367,7 @@ elif page == "EDA":
 
 
 if page == "Prediction":
-    sns.set_style("whitegrid")
-    sns.set_palette("Set2")
-    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    st.markdown("<p class='title'>🔮 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("""
     This application predicts future terrorism incidents using a **Random Forest Regressor**. 
     It leverages historical data, including features like year, fatalities, injuries, and region, 
@@ -384,6 +382,13 @@ if page == "Prediction":
     if country_data.empty:
         st.warning("No data available for the selected country.")
     else:
+        # Define categorize_region function
+        def categorize_region(country):
+            region_mapping = {
+                "Afghanistan": "ME", "Iraq": "ME", "Nigeria": "AF",  # Add all mappings
+            }
+            return region_mapping.get(country, "Unknown")
+
         # Prepare the data for modeling
         X = data[['Year', 'Fatalities', 'Injuries', 'Hostages'] + [col for col in data.columns if col.startswith('Region_')]]
         y = data['Incidents']
@@ -397,10 +402,13 @@ if page == "Prediction":
         model = RandomForestRegressor(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
 
-        # User input for the year to predict
+        # User inputs
         future_year = st.slider("Select the year to predict:", 2023, 2030, 2025)
+        fatalities = st.number_input("Fatalities", value=int(country_data['Fatalities'].mean()))
+        injuries = st.number_input("Injuries", value=int(country_data['Injuries'].mean()))
+        hostages = st.number_input("Hostages", value=int(country_data['Hostages'].mean()))
 
-        # Region encoding for the selected country
+        # Region encoding
         selected_region = categorize_region(selected_country)
         region_columns = [col for col in X_train.columns if col.startswith('Region_')]
         region_encoded = {col: 1 if col == f"Region_{selected_region}" else 0 for col in region_columns}
@@ -408,15 +416,11 @@ if page == "Prediction":
         # Create future_data DataFrame for prediction
         future_data = pd.DataFrame({
             'Year': [future_year],
-            'Fatalities': [country_data['Fatalities'].mean()],  # Use mean fatalities as an example
-            'Injuries': [country_data['Injuries'].mean()],      # Use mean injuries as an example
-            'Hostages': [country_data['Hostages'].mean()]       # Use mean hostages as an example
+            'Fatalities': [fatalities],
+            'Injuries': [injuries],
+            'Hostages': [hostages]
         })
-
-        # Add region columns to future_data
         future_data = future_data.assign(**region_encoded)
-
-        # Reorder columns to match X_train
         future_data = future_data[X_train.columns]
 
         # Predict incidents
