@@ -376,10 +376,6 @@ if page == "Prediction":
     to forecast the number of incidents.
     """)
 
-
-    
-
-    
     # Country selection
     selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
 
