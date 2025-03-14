@@ -358,43 +358,58 @@ elif page == "EDA":
 
 
 
-elif page == "Prediction":
+
+# Prediction Page
+if page == "Prediction":
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
-
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
-    st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
+    st.write("""
+    This application predicts future terrorism incidents using **SARIMA (Seasonal ARIMA)**, 
+    a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
+    in historical data to provide accurate predictions.
+    """)
 
     # Country selection
     selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
 
     # Filter data by the selected country
     country_data = data[data["Country"] == selected_country]
-
     if country_data.empty:
         st.warning("No data available for the selected country.")
     else:
         # Group by Year and sum incidents
         incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
-
         if incidents_by_year.empty:
             st.warning("No incident data available for the selected country.")
         else:
-            # Fit the Holt model
-            model = Holt(incidents_by_year["Incidents"])
-            fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
+            # Ensure data is sorted by year
+            incidents_by_year = incidents_by_year.sort_values(by="Year")
 
-            # Ensure non-negative fitted values
-            fitted_values = np.maximum(fit.fittedvalues, 0)
+            # Fit the SARIMA model
+            try:
+                model = SARIMAX(
+                    incidents_by_year["Incidents"],
+                    order=(1, 1, 1),  # Non-seasonal part: (p, d, q)
+                    seasonal_order=(1, 1, 1, 12),  # Seasonal part: (P, D, Q, S)
+                    enforce_stationarity=False,
+                    enforce_invertibility=False
+                )
+                fit = model.fit(disp=False)
+            except Exception as e:
+                st.error(f"Model fitting failed: {e}")
+                st.stop()
 
             # User input for number of years to predict
             num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
             last_year = incidents_by_year["Year"].max()
             forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
 
-            # Ensure non-negative forecast values
-            forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
+            # Generate forecasts with confidence intervals
+            forecast = fit.get_forecast(steps=num_years_to_predict)
+            forecast_values = forecast.predicted_mean
+            confidence_intervals = forecast.conf_int()
 
             # Plot results
             fig, ax = plt.subplots(figsize=(12, 6))
@@ -403,13 +418,17 @@ elif page == "Prediction":
             ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
                     marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
 
-            # Fitted Trend
-            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
-                    color="red", label="Fitted Trend")
-
             # Forecast
             ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
                     linewidth=2, color="green", label="Forecast")
+
+            # Confidence Intervals
+            ax.fill_between(
+                forecast_years,
+                confidence_intervals.iloc[:, 0],
+                confidence_intervals.iloc[:, 1],
+                color="green", alpha=0.2, label="Confidence Interval"
+            )
 
             # Labels and Styling
             ax.set_xlabel("Year", fontsize=14, fontweight="bold")
@@ -423,8 +442,23 @@ elif page == "Prediction":
 
             # Display forecast values
             st.subheader(f"Predicted Incidents for {selected_country}:")
-            predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
+            predictions = pd.DataFrame({
+                "Year": forecast_years,
+                "Predicted Incidents": forecast_values,
+                "Lower Bound": confidence_intervals.iloc[:, 0],
+                "Upper Bound": confidence_intervals.iloc[:, 1]
+            })
             st.dataframe(predictions)
+
+            # Model Evaluation (Optional)
+            st.subheader("Model Evaluation")
+            st.write("""
+            To evaluate the model's performance, we calculate error metrics like **MAE**, **RMSE**, and **MAPE**.
+            """)
+            # Example: Calculate MAE for training data
+            residuals = fit.resid
+            mae = np.mean(np.abs(residuals))
+            st.write(f"- **Mean Absolute Error (MAE)**: {mae:.2f}")
 
 
 
