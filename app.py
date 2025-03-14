@@ -367,11 +367,13 @@ elif page == "EDA":
 
 
 if page == "Prediction":
-    st.markdown("<p class='title'>🔮 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    sns.set_style("whitegrid")
+    sns.set_palette("Set2")
+    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("""
-    This application predicts future terrorism incidents using a **Random Forest Regressor**. 
-    It leverages historical data, including features like year, fatalities, injuries, and region, 
-    to forecast the number of incidents.
+    This application predicts future terrorism incidents using **SARIMA (Seasonal ARIMA)**, 
+    a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
+    in historical data to provide accurate predictions.
     """)
 
     # Country selection
@@ -382,74 +384,85 @@ if page == "Prediction":
     if country_data.empty:
         st.warning("No data available for the selected country.")
     else:
-        # Define categorize_region function
-        def categorize_region(country):
-            region_mapping = {
-                "Afghanistan": "ME", "Iraq": "ME", "Nigeria": "AF",  # Add all mappings
-            }
-            return region_mapping.get(country, "Unknown")
+        # Group by Year and sum incidents
+        incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
+        if incidents_by_year.empty or incidents_by_year["Incidents"].sum() == 0:
+            st.warning(f"No incidents recorded for {selected_country}. Unable to make predictions.")
+        elif len(incidents_by_year) < 5:
+            st.warning(f"Not enough data to make predictions for {selected_country}.")
+        else:
+            # Ensure data is sorted by year
+            incidents_by_year = incidents_by_year.sort_values(by="Year")
 
-        # Prepare the data for modeling
-        X = data[['Year', 'Fatalities', 'Injuries', 'Hostages'] + [col for col in data.columns if col.startswith('Region_')]]
-        y = data['Incidents']
+            # Visualize the time-series data
+            fig, ax = plt.subplots(figsize=(10, 5))
+            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], marker="o", color="#4C72B0")
+            ax.set_title(f"Terrorism Incidents Over Time for {selected_country}", fontsize=16)
+            ax.set_xlabel("Year", fontsize=14)
+            ax.set_ylabel("Total Incidents", fontsize=14)
+            ax.grid(True)
+            st.pyplot(fig)
 
-        # Split into training and testing sets
-        from sklearn.model_selection import train_test_split
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            # Fit the SARIMA model
+            try:
+                model = SARIMAX(
+                    incidents_by_year["Incidents"],
+                    order=(1, 1, 1),  # Non-seasonal part: (p, d, q)
+                    seasonal_order=(1, 1, 1, 12),  # Seasonal part: (P, D, Q, S)
+                    enforce_stationarity=False,
+                    enforce_invertibility=False
+                )
+                fit = model.fit(disp=False)
+            except Exception as e:
+                st.error(f"Model fitting failed: {e}")
+                st.stop()
 
-        # Train the Random Forest Regressor model
-        from sklearn.ensemble import RandomForestRegressor
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        model.fit(X_train, y_train)
+            # User input for number of years to predict
+            num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
+            last_year = incidents_by_year["Year"].max()
+            forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
 
-        # User inputs
-        future_year = st.slider("Select the year to predict:", 2023, 2030, 2025)
-        fatalities = st.number_input("Fatalities", value=int(country_data['Fatalities'].mean()))
-        injuries = st.number_input("Injuries", value=int(country_data['Injuries'].mean()))
-        hostages = st.number_input("Hostages", value=int(country_data['Hostages'].mean()))
+            # Generate forecasts with confidence intervals
+            forecast = fit.get_forecast(steps=num_years_to_predict)
+            forecast_values = np.maximum(forecast.predicted_mean, 0)
+            confidence_intervals = np.maximum(forecast.conf_int(), 0)
 
-        # Region encoding
-        selected_region = categorize_region(selected_country)
-        region_columns = [col for col in X_train.columns if col.startswith('Region_')]
-        region_encoded = {col: 1 if col == f"Region_{selected_region}" else 0 for col in region_columns}
+            # Plot results
+            fig, ax = plt.subplots(figsize=(12, 6))
+            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
+                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
+            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
+                    linewidth=2, color="green", label="Forecast")
+            ax.fill_between(
+                forecast_years,
+                confidence_intervals.iloc[:, 0],
+                confidence_intervals.iloc[:, 1],
+                color="green", alpha=0.2, label="Confidence Interval"
+            )
+            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
+            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
+            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
+            ax.legend(fontsize=12)
+            ax.grid(alpha=0.3)
+            st.pyplot(fig)
 
-        # Create future_data DataFrame for prediction
-        future_data = pd.DataFrame({
-            'Year': [future_year],
-            'Fatalities': [fatalities],
-            'Injuries': [injuries],
-            'Hostages': [hostages]
-        })
-        future_data = future_data.assign(**region_encoded)
-        future_data = future_data[X_train.columns]
+            # Display forecast values
+            st.subheader(f"Predicted Incidents for {selected_country}:")
+            predictions = pd.DataFrame({
+                "Year": forecast_years,
+                "Predicted Incidents": forecast_values,
+                "Lower Bound": confidence_intervals.iloc[:, 0],
+                "Upper Bound": confidence_intervals.iloc[:, 1]
+            })
+            st.dataframe(predictions)
 
-        # Predict incidents
-        future_incidents = model.predict(future_data)[0]
-
-        # Display the prediction
-        st.subheader(f"Predicted Incidents for {selected_country} in {future_year}:")
-        st.metric("Predicted Incidents", round(future_incidents))
-
-        # Visualize actual vs predicted trends
-        st.subheader("Historical vs Predicted Trends")
-        fig, ax = plt.subplots(figsize=(10, 5))
-        ax.plot(country_data['Year'], country_data['Incidents'], marker="o", color="#4C72B0", label="Actual Data")
-        ax.scatter([future_year], [future_incidents], color="green", s=100, label="Predicted Value")
-        ax.set_title(f"Terrorism Incidents Over Time for {selected_country}", fontsize=16)
-        ax.set_xlabel("Year", fontsize=14)
-        ax.set_ylabel("Total Incidents", fontsize=14)
-        ax.legend()
-        ax.grid(True)
-        st.pyplot(fig)
-
-        # Model Evaluation Metrics
-        from sklearn.metrics import mean_absolute_error, mean_squared_error
-        y_pred = model.predict(X_test)
-        mae = mean_absolute_error(y_test, y_pred)
-        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-        st.subheader("Model Evaluation Metrics")
-        st.write(f"- **Mean Absolute Error (MAE)**: {mae:.2f}")
-        st.write(f"- **Root Mean Squared Error (RMSE)**: {rmse:.2f}")
+            # Model Evaluation Metrics
+            residuals = fit.resid
+            mae = np.mean(np.abs(residuals))
+            rmse = np.sqrt(np.mean(residuals**2))
+            st.subheader("Model Evaluation Metrics")
+            st.write(f"- **Mean Absolute Error (MAE)**: {mae:.2f}")
+            st.write(f"- **Root Mean Squared Error (RMSE)**: {rmse:.2f}")
 
 
 
