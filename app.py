@@ -28,6 +28,11 @@ image_base64 = get_base64_image("istockphoto-106492379-612x612.jpg")
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
 
+
+
+# Get the region for the selected country
+selected_region = data[data["Country"] == selected_country]["Region"].iloc[0]
+
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
 
