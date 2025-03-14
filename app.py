@@ -366,9 +366,7 @@ elif page == "EDA":
 
 
 
-# Prediction Page
 if page == "Prediction":
-    # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
     st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
@@ -388,9 +386,14 @@ if page == "Prediction":
     else:
         # Group by Year and sum incidents
         incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
-        if incidents_by_year.empty:
-            st.warning("No incident data available for the selected country.")
+        if incidents_by_year.empty or incidents_by_year["Incidents"].sum() == 0:
+            st.warning(f"No incidents recorded for {selected_country}. Unable to make predictions.")
+        elif len(incidents_by_year) < 5:
+            st.warning(f"Not enough data to make predictions for {selected_country}.")
         else:
+            # Ensure data is sorted by year
+            incidents_by_year = incidents_by_year.sort_values(by="Year")
+
             # Fit the SARIMA model
             try:
                 model = SARIMAX(
@@ -412,36 +415,26 @@ if page == "Prediction":
 
             # Generate forecasts with confidence intervals
             forecast = fit.get_forecast(steps=num_years_to_predict)
-            forecast_values = forecast.predicted_mean
-            confidence_intervals = forecast.conf_int()
+            forecast_values = np.maximum(forecast.predicted_mean, 0)  # Ensure non-negative predictions
+            confidence_intervals = np.maximum(forecast.conf_int(), 0)  # Ensure non-negative intervals
 
             # Plot results
             fig, ax = plt.subplots(figsize=(12, 6))
-
-            # Actual Data
             ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
                     marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
-
-            # Forecast
             ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
                     linewidth=2, color="green", label="Forecast")
-
-            # Confidence Intervals
             ax.fill_between(
                 forecast_years,
                 confidence_intervals.iloc[:, 0],
                 confidence_intervals.iloc[:, 1],
                 color="green", alpha=0.2, label="Confidence Interval"
             )
-
-            # Labels and Styling
             ax.set_xlabel("Year", fontsize=14, fontweight="bold")
             ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
             ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
             ax.legend(fontsize=12)
             ax.grid(alpha=0.3)
-
-            # Show plot in Streamlit
             st.pyplot(fig)
 
             # Display forecast values
@@ -454,15 +447,13 @@ if page == "Prediction":
             })
             st.dataframe(predictions)
 
-            # Model Evaluation (Optional)
-            st.subheader("Model Evaluation")
-            st.write("""
-            To evaluate the model's performance, we calculate error metrics like **MAE**, **RMSE**, and **MAPE**.
-            """)
-            # Example: Calculate MAE for training data
+            # Model Evaluation Metrics
             residuals = fit.resid
             mae = np.mean(np.abs(residuals))
+            rmse = np.sqrt(np.mean(residuals**2))
+            st.subheader("Model Evaluation Metrics")
             st.write(f"- **Mean Absolute Error (MAE)**: {mae:.2f}")
+            st.write(f"- **Root Mean Squared Error (RMSE)**: {rmse:.2f}")
 
 
 
