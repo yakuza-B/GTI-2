@@ -212,101 +212,229 @@ if page == "Introduction":
 
 
 
-# Overview Page
-if page == "Overview":
-    # Centered Title
-    st.markdown("<h1 class='title'>ð � � �  Global Terrorism Overview</h1>", unsafe_allow_html=True)
+elif page == "EDA":
+    # Apply Seaborn theme for better aesthetics
+    sns.set_style("whitegrid")
+    sns.set_palette("Set2")
+
+    if "show_eda" not in st.session_state:
+     st.session_state.show_eda = False
     
-    # Region Selection
-    st.subheader("Select a Region")
-    regions = {
-        "NA": "North America",
-        "EU": "Europe",
-        "SA": "South America",
-        "AF": "Africa",
-        "AS": "Asia",
-        "ME": "Middle East",
-        "OC": "Oceania"
-    }
-    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
+    if not st.session_state.show_eda:
+      st.markdown("""
+        <h1 style='text-align: center; color: #3366CC;'>🔍 Exploratory Data Analysis (EDA)</h1>
+        <p style='text-align: center; font-size:18px;'>
+            Welcome to the **Exploratory Data Analysis Dashboard**!  
+            In this section, we take a deep dive into the **Global Terrorism Index 2023** dataset to uncover key insights.  
+            Through interactive visualizations and statistical analysis, we aim to answer crucial questions, such as:
+        </p>
+        <ul>
+            <li>📌 Which countries experience the highest number of terrorist incidents?</li>
+            <li>📈 How have terrorist incidents, fatalities, and injuries evolved over time?</li>
+            <li>🔥 What factors are most correlated with terrorism severity?</li>
+            <li>🌍 How do terrorist incidents vary across different regions, and which areas are most affected?</li>
+        </ul>
+        <p style='text-align: center;'>Understanding these patterns is essential for policymakers, security agencies, and researchers working towards a safer world.</p>
+        <hr style='border: 1px solid #ddd;'>
+        <p style='text-align: center; font-size:16px; color:gray;'>
+            👉 Click <b>'Explore Data 🔍'</b> to explore the data.
+        </p>
+    """, unsafe_allow_html=True)
+
+      image = Image.open("11.webp")  
+      st.image(image, use_container_width=True)
     
-    # Define countries per region
-    region_countries = {
-        "NA": ["United States", "Canada", "Mexico"],
-        "EU": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands", "Sweden"],
-        "SA": ["Brazil", "Argentina", "Colombia", "Chile", "Peru"],
-        "AF": ["South Africa", "Nigeria", "Egypt", "Kenya", "Ethiopia"],
-        "AS": ["China", "India", "Japan", "Indonesia", "Malaysia", "Pakistan"],
-        "ME": ["Iran", "Iraq", "Syria", "Saudi Arabia", "Yemen"],
-        "OC": ["Australia", "New Zealand", "Fiji", "Papua New Guinea"]
-    }
-    
-    # Filter data based on selected region
-    filtered_data = data[data["Country"].isin(region_countries[selected_region])]
-    
-    # Display Region-Specific Map
-    st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
-    st.write(f"The map below visualizes terrorism incidents in {regions[selected_region]}. Each country's color intensity corresponds to the number of incidents recorded.")
-    if not filtered_data.empty:
-        fig = px.choropleth(
-            data_frame=filtered_data,
-            locations="Country",
-            locationmode="country names",
-            color="Incidents",
-            title=f"Terrorism Incidents in {regions[selected_region]}",
-            color_continuous_scale="purples",
-            template="plotly_dark"
-        )
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.warning(f"No data available for {regions[selected_region]}.")
-    
-    # Text Explanation for the Map
-    st.markdown(f"""
-    The map above highlights the distribution of terrorism incidents across {regions[selected_region]}. 
-    Countries with darker shades indicate higher numbers of incidents, while lighter shades represent fewer incidents. 
-    This visualization helps identify regional hotspots and patterns of terrorist activity.
-    """)
-    
-    # Country Selection (Based on Selected Region)
-    st.subheader("Select a Country")
-    selected_country = st.selectbox("Choose a country:", region_countries[selected_region])
-    
-    # Insights from Dataset
-    st.subheader(f"Insights for {selected_country}")
-    country_data = data[data["Country"] == selected_country]
-    if not country_data.empty:
-        incidents = country_data["Incidents"].sum()
-        most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
+    if st.button("Explore Data 🔍", key="explore_button"):
+        st.session_state.show_eda = True
+        st.rerun()
+   
+    if st.session_state.show_eda:
+     tab1, tab2, tab3, tab4 = st.tabs(["📌 Top 10 Countries", "📈 Global Terrorism Trends Over the Years", "🔥 Terrorism Score vs Severity","🌍 Geographic Analysis"])
+     
+    # 📌 Top 10 Most Affected Countries
+     with tab1:
+        st.markdown("## 📌 Top 10 Most Affected Countries")
         
-        # Graph: Bar Chart for Incident Distribution
-        st.write(f"The bar chart below shows the distribution of terrorism incidents in {selected_country}.")
-        fig, ax = plt.subplots(figsize=(8, 4))
-        sns.barplot(x="Year", y="Incidents", data=country_data, palette="Blues_d", ax=ax)
-        ax.set_title(f"Terrorism Incidents Over Time in {selected_country}")
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Number of Incidents")
+        # Aggregating data to find top affected countries
+        country_counts = data.groupby("Country")["Incidents"].sum().reset_index()
+        top_countries = country_counts.sort_values(by="Incidents", ascending=False).head(10)
+
+        # Display bar chart
+        st.bar_chart(top_countries.set_index("Country"))
+
+        # Data Table
+        st.subheader("Top 10 Countries Data")
+        st.write(top_countries)
+
+        # Alternative visualization with Seaborn
+        fig, ax = plt.subplots(figsize=(12, 6))
+        sns.barplot(x="Incidents", y="Country", data=top_countries, palette="Reds_r", ax=ax)
+        ax.set_xlabel("Number of Incidents")
+        ax.set_ylabel("Country")
+        ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
         st.pyplot(fig)
-        
-        # Table: Key Metrics
-        st.subheader("Key Metrics")
-        metrics_table = pd.DataFrame({
-            "Metric": ["Total Incidents", "Most Common Attack Type"],
-            "Value": [f"{incidents:,}", most_common_attack]
-        })
-        st.dataframe(metrics_table)
-        
-        # Text Explanation for Insights
-        st.markdown(f"""
-        **Total Incidents**: {selected_country} has recorded a total of {incidents:,} terrorism incidents.  
-        **Most Common Attack Type**: The predominant attack type in {selected_country} is `{most_common_attack}`.  
-        
-        These insights provide a snapshot of the terrorism landscape in {selected_country}, highlighting both the scale and nature of attacks.
-        """)
-    else:
-        st.warning("No data available for the selected country.")
+
+
+        st.markdown("""
+         <h2 style='text-align: center;'>Global Terrorism Impact: Top 10 Most Affected Countries</h2>
+         <p style='font-size:18px;'>
+         This visualization presents the top 10 countries most affected by terrorism, combining bar charts, data tables, and horizontal bar plots to provide a comprehensive view of terrorism incidents worldwide.  
+         The data clearly illustrates the unequal distribution of terrorist attacks, with some nations experiencing significantly higher numbers of incidents compared to others.
+         </p>
+
+         <p style='font-size:18px;'>
+         From the data, it is evident that Iraq, Afghanistan, Pakistan, and Somalia bear the highest burden of terrorist activities, with incident numbers far exceeding those in other regions.  
+         A sharp decline in incidents is observed from India onwards, indicating that the impact of terrorism is not evenly distributed geographically but rather concentrated in specific regions.  
+         Certain countries are significantly more vulnerable to attacks compared to others, emphasizing the need for targeted security measures and geopolitical analysis.
+         </p>
+        """, unsafe_allow_html=True)
+
+
+
+    # 📈 Global Terrorism Trends Over the Years
+     with tab2:
+        st.markdown("## 📈 Global Terrorism Trends Over the Years")
+
+   
+        file_path = "Global Terrorism Index 2023.csv"
+        df = pd.read_csv(file_path)
+
     
-    st.markdown("---")  # Divider
+        global_trend = df.groupby("Year").agg({
+            "Incidents": "sum",
+            "Fatalities": "sum",
+            "Injuries": "sum"
+        }).reset_index()
+
+    
+        st.write("### Yearly Aggregated Data")
+        st.dataframe(global_trend) 
+
+    
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        ax.plot(global_trend["Year"], global_trend["Incidents"], marker="o", linestyle="-", label="Total Incidents")
+        ax.plot(global_trend["Year"], global_trend["Fatalities"], marker="s", linestyle="--", label="Total Fatalities", alpha=0.7)
+        ax.plot(global_trend["Year"], global_trend["Injuries"], marker="^", linestyle=":", label="Total Injuries", alpha=0.7)
+
+        ax.set_xlabel("Year")
+        ax.set_ylabel("Count")
+        ax.set_title("Global Terrorism Incidents, Fatalities, and Injuries (Yearly)")
+        ax.legend()
+        ax.grid(True)
+
+    
+        st.pyplot(fig)
+
+        st.markdown("""
+          <h2 style='text-align: center;'>Global Terrorism Trends (2012-2022)</h2>
+          <p style='font-size:18px;'>
+          This line chart illustrates the trends in global terrorist incidents (Total Incidents), fatalities (Total Fatalities), and injuries (Total Injuries) from 2012 to 2022. 
+          </p>
+
+          <p style='font-size:18px;'>
+          From the chart, it is evident that the total number of terrorist incidents (green) has remained relatively stable, with annual occurrences generally ranging between 4,000 and 6,000, indicating that terrorism continues to persist. This could be attributed to enhanced security measures or improvements in medical standards.  
+
+          Fatalities (orange) peaked between 2014 and 2016 but have gradually declined, suggesting that the lethality of attacks has decreased over time.  
+ 
+          Injuries (blue) fluctuated significantly between 2012 and 2017 but showed an overall downward trend afterward, indicating that while the impact of terrorist attacks varied, their overall destructive capacity has diminished, potentially due to changes in attack methods.  
+
+          Despite the decline in casualties, terrorism remains a global security threat, necessitating continuous monitoring and preventive measures.
+          </p>
+         """, unsafe_allow_html=True)
+
+    #🔥 Terrorism Score vs Severity
+     with tab3:
+        st.markdown("## 🔥 Correlation Heatmap: Terrorism Score vs Severity")
+        st.write("This heatmap visualizes the correlation between terrorism scores, attack incidents, fatalities, injuries, and hostage situations.")
+
+        selected_columns = ['Score', 'Incidents', 'Fatalities', 'Injuries', 'Hostages']
+        correlation_matrix = df[selected_columns].corr()
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+        sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5, ax=ax)
+        plt.title("Correlation Heatmap: Terrorism Score vs Severity")
+         
+        st.pyplot(fig)
+         
+        st.markdown("""
+          <h2 style='text-align: center;'> Insights from the Correlation Heatmap</h2>
+
+          <p style='font-size:18px;'>
+          From the heatmap, we can observe the following trends:
+          </p>
+
+          <ul style='font-size:18px;'>
+          <li><b>Terrorism Score (Score)</b> and <b>Terrorist Incidents (Incidents)</b> have a correlation of <b>0.52</b>, indicating that countries with higher scores tend to experience more terrorist attacks. However, the correlation is not very strong, suggesting that the score may also be influenced by other factors.</li>
+
+          <li><b>Terrorist Incidents (Incidents)</b> are highly correlated with <b>Fatalities (Fatalities)</b> and <b>Injuries (Injuries)</b>, meaning that more attacks generally result in higher casualties.</li>
+
+          <li><b>Fatalities (Fatalities)</b> and <b>Injuries (Injuries)</b> have a correlation of <b>0.91</b>, suggesting that a single terrorist attack often results in both deaths and injuries.</li>
+
+          <li><b>Hostage Numbers (Hostages)</b> show lower correlation with other variables (maximum <b>0.32</b>), indicating that hostage-taking incidents may not be directly related to general terrorist attacks or their casualties, and might involve different attack patterns.</li>
+          </ul>
+
+          <p style='font-size:18px;'>
+          This analysis provides a quantitative view of how different terrorism-related factors interact, helping policymakers and researchers understand the broader impact of terrorist activities.
+          </p>
+          """, unsafe_allow_html=True)
+
+
+   
+
+
+        
+    # 🌍 Geographic Analysis
+     with tab4:
+        st.markdown("## 🌍 Global Terrorism Incidents by Country")
+        st.write("This map visualizes the distribution of terrorist incidents around the world based on the frequency of attacks.")
+         
+        df_geo = df[['Country', 'Incidents']].groupby('Country').sum().reset_index()
+
+
+        country_corrections = {
+        "United States of America": "United States",
+        "Cote d' Ivoire": "Ivory Coast",
+        "Democratic Republic of the Congo": "Congo (Kinshasa)",
+        "Republic of the Congo": "Congo (Brazzaville)"
+       }
+        df_geo["Country"] = df_geo["Country"].replace(country_corrections)
+
+        df_geo["Incidents"] = pd.to_numeric(df_geo["Incidents"], errors="coerce").fillna(0)
+        
+        fig = px.choropleth(
+           df_geo,
+           locations="Country",
+           locationmode="country names",
+           color="Incidents",
+           hover_name="Country",
+           hover_data=["Incidents"],
+           color_continuous_scale="Reds",
+           title="Global Distribution of Terrorist Incidents",
+           range_color=(0, df_geo['Incidents'].max())  
+       )
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("""
+            <h3 style='text-align: center;'> Global Terrorism Incident Distribution</h3>
+
+            <p style='font-size:18px;'>
+            This map reveals that <b>Iraq</b> is the country most severely affected by terrorism, with the highest number of incidents.  
+            Countries in <b>South Asia</b>, such as <b>Pakistan</b> and <b>India</b>, as well as <b>Middle Eastern nations</b> like <b>Syria</b> and <b>Afghanistan</b>, exhibit a high frequency of terrorist attacks, indicating that these regions remain major hotspots for terrorism.  
+            </p>
+
+            <p style='font-size:18px;'>
+            Compared to the Middle East and South Asia, <b>Africa</b> has relatively fewer terrorist incidents, but countries such as <b>Somalia, Nigeria, and Burkina Faso</b> still experience a significant level of terrorist activity, as indicated by the darker colors on the map.  
+            </p>
+
+            <p style='font-size:18px;'>
+            Most <b>Western countries</b> (such as the <b>United States, Canada, Australia, and European nations</b>) appear in lighter shades, suggesting fewer terrorist incidents. This may indicate more effective security controls and counter-terrorism measures in these countries.
+            </p>
+
+            <p style='font-size:18px; font-weight: bold; color: #D32F2F;'>
+            These trends highlight the importance of the global fight against terrorism, particularly the need to strengthen security measures and international cooperation in conflict-prone regions to reduce the threat of terrorism.
+            </p>
+            """, unsafe_allow_html=True)
 
 
 
