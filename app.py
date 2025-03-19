@@ -518,7 +518,7 @@ if page == "Prediction":
     sns.set_palette("Set2")
     
     # Title for the Prediction Page
-    st.markdown("<p class='title'>ð � � �  Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    st.markdown("<p class='title'> Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("""
     This application predicts future terrorism incidents using **SARIMA (Seasonal ARIMA)**, 
     a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
