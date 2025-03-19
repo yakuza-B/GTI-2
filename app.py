@@ -646,6 +646,7 @@ if page == "Prediction":
             - **Blue Line**: Represents the actual number of incidents recorded in previous years.
             - **Green Dashed Line**: Represents the forecasted number of incidents for future years.
             - Hover over the data points to see exact values for each year.
+            
             Note: The predictions are based on the SARIMA model and may not account for unforeseen events or changes in trends.
             """)
             
