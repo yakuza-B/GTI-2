@@ -526,7 +526,7 @@ if page == "Prediction":
     """)
 
     # Section: Top 5 Countries with the Most Incidents
-    st.subheader("ð � � �  Top 5 Countries with the Most Terrorism Incidents")
+    st.subheader("Top 5 Countries with the Most Terrorism Incidents")
     st.write("""
     Below is a bar chart showing the top 5 countries with the highest number of terrorism incidents. 
     These countries are identified based on the total number of incidents recorded in the dataset.
@@ -560,7 +560,7 @@ if page == "Prediction":
     st.dataframe(top_countries)
 
     # Section: Country-Specific Prediction
-    st.subheader("ð � � �  Predict Future Terrorism Incidents for a Specific Country")
+    st.subheader("Predict Future Terrorism Incidents for a Specific Country")
     st.write("""
     Use the dropdown menu below to select a country and predict future terrorism incidents.
     """)
