@@ -516,16 +516,58 @@ elif page == "EDA":
 if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
-    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    
+    # Title for the Prediction Page
+    st.markdown("<p class='title'>ð � � �  Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("""
     This application predicts future terrorism incidents using **SARIMA (Seasonal ARIMA)**, 
     a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
     in historical data to provide accurate predictions.
     """)
 
+    # Section: Top 5 Countries with the Most Incidents
+    st.subheader("ð � � �  Top 5 Countries with the Most Terrorism Incidents")
+    st.write("""
+    Below is a bar chart showing the top 5 countries with the highest number of terrorism incidents. 
+    These countries are identified based on the total number of incidents recorded in the dataset.
+    """)
+    
+    # Aggregate data for top 5 countries
+    top_countries = (
+        data.groupby("Country")["Incidents"].sum()
+        .reset_index()
+        .sort_values(by="Incidents", ascending=False)
+        .head(5)
+    )
+    
+    # Plot the top 5 countries
+    fig_top5, ax_top5 = plt.subplots(figsize=(10, 5))
+    sns.barplot(
+        x="Incidents",
+        y="Country",
+        data=top_countries,
+        palette="Reds_r",
+        ax=ax_top5
+    )
+    ax_top5.set_title("Top 5 Countries with the Most Terrorism Incidents", fontsize=16, fontweight="bold")
+    ax_top5.set_xlabel("Total Incidents", fontsize=14, fontweight="bold")
+    ax_top5.set_ylabel("Country", fontsize=14, fontweight="bold")
+    ax_top5.grid(alpha=0.3)
+    st.pyplot(fig_top5)
+
+    # Display the top 5 countries as a table
+    st.subheader("Top 5 Countries Data")
+    st.dataframe(top_countries)
+
+    # Section: Country-Specific Prediction
+    st.subheader("ð � � �  Predict Future Terrorism Incidents for a Specific Country")
+    st.write("""
+    Use the dropdown menu below to select a country and predict future terrorism incidents.
+    """)
+    
     # Country selection
     selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
-
+    
     # Filter data by the selected country
     country_data = data[data["Country"] == selected_country]
     if country_data.empty:
@@ -540,7 +582,7 @@ if page == "Prediction":
         else:
             # Ensure data is sorted by year
             incidents_by_year = incidents_by_year.sort_values(by="Year")
-
+            
             # Fit the SARIMA model
             try:
                 model = SARIMAX(
@@ -554,23 +596,27 @@ if page == "Prediction":
             except Exception as e:
                 st.error(f"Model fitting failed: {e}")
                 st.stop()
-
+            
             # User input for number of years to predict
             num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
             last_year = incidents_by_year["Year"].max()
             forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-
+            
             # Generate forecasts with confidence intervals
             forecast = fit.get_forecast(steps=num_years_to_predict)
             forecast_values = np.maximum(forecast.predicted_mean, 0)  # Ensure non-negative predictions
             confidence_intervals = np.maximum(forecast.conf_int(), 0)  # Ensure non-negative intervals
-
+            
             # Plot results
             fig, ax = plt.subplots(figsize=(12, 6))
-            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
-            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                    linewidth=2, color="green", label="Forecast")
+            ax.plot(
+                incidents_by_year["Year"], incidents_by_year["Incidents"], 
+                marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0"
+            )
+            ax.plot(
+                forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
+                linewidth=2, color="green", label="Forecast"
+            )
             ax.fill_between(
                 forecast_years,
                 confidence_intervals.iloc[:, 0],
@@ -583,7 +629,7 @@ if page == "Prediction":
             ax.legend(fontsize=12)
             ax.grid(alpha=0.3)
             st.pyplot(fig)
-
+            
             # Display forecast values
             st.subheader(f"Predicted Incidents for {selected_country}:")
             predictions = pd.DataFrame({
@@ -593,7 +639,7 @@ if page == "Prediction":
                 "Upper Bound": confidence_intervals.iloc[:, 1]
             })
             st.dataframe(predictions)
-
+            
             # Model Evaluation Metrics
             residuals = fit.resid
             mae = np.mean(np.abs(residuals))
@@ -601,7 +647,6 @@ if page == "Prediction":
             st.subheader("Model Evaluation Metrics")
             st.write(f"- **Mean Absolute Error (MAE)**: {mae:.2f}")
             st.write(f"- **Root Mean Squared Error (RMSE)**: {rmse:.2f}")
-
 
 
 
