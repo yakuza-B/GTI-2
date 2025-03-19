@@ -567,7 +567,7 @@ if page == "Prediction":
     st.plotly_chart(fig_top5, use_container_width=True)
 
     # Display the top 5 countries as a table
-    st.subheader("Top 5 Countries with the Most Incidents Data")
+    st.subheader("Top 5 Countries with the Most Terrorism Incidents Data")
     st.dataframe(top_countries)
 
     # Section: Country-Specific Prediction
