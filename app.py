@@ -514,6 +514,7 @@ elif page == "EDA":
 
 
 
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -615,14 +616,6 @@ if page == "Prediction":
             forecast = fit.get_forecast(steps=num_years_to_predict)
             forecast_values = np.maximum(forecast.predicted_mean, 0)  # Ensure non-negative predictions
             
-            # Display forecast values without upper/lower bounds
-            st.subheader(f"Predicted Incidents for {selected_country}:")
-            predictions = pd.DataFrame({
-                "Year": forecast_years,
-                "Predicted Incidents": forecast_values
-            })
-            st.dataframe(predictions)
-            
             # Improved graph visualization using Plotly
             fig = go.Figure()
 
@@ -658,8 +651,17 @@ if page == "Prediction":
                 margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
             )
 
-            # Show the interactive plot
+            # Show the interactive plot first
+            st.subheader("Incident Prediction Graph")
             st.plotly_chart(fig, use_container_width=True)
+            
+            # Display forecast values without upper/lower bounds
+            st.subheader(f"Predicted Incidents for {selected_country}:")
+            predictions = pd.DataFrame({
+                "Year": forecast_years,
+                "Predicted Incidents": forecast_values
+            })
+            st.dataframe(predictions)
             
             # Model Evaluation Metrics
             residuals = fit.resid
