@@ -511,6 +511,14 @@ elif page == "EDA":
   
 
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+
 if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
@@ -526,7 +534,7 @@ if page == "Prediction":
     # Section: Top 5 Countries with the Most Incidents
     st.subheader("Top 5 Countries with the Most Terrorism Incidents")
     st.write("""
-    Below is a bar chart showing the top 5 countries with the highest number of terrorism incidents. 
+    Below is an interactive bar chart showing the top 5 countries with the highest number of terrorism incidents. 
     These countries are identified based on the total number of incidents recorded in the dataset.
     """)
     
@@ -538,20 +546,32 @@ if page == "Prediction":
         .head(5)
     )
     
-    # Plot the top 5 countries
-    fig_top5, ax_top5 = plt.subplots(figsize=(10, 5))
-    sns.barplot(
-        x="Incidents",
-        y="Country",
-        data=top_countries,
-        palette="Reds_r",
-        ax=ax_top5
+    # Create an interactive bar chart using Plotly
+    fig_top5 = go.Figure()
+
+    # Add bars
+    fig_top5.add_trace(go.Bar(
+        x=top_countries["Incidents"],
+        y=top_countries["Country"],
+        orientation="h",  # Horizontal bar chart
+        marker=dict(color=top_countries["Incidents"], colorscale="Reds"),  # Gradient color scale
+        text=top_countries["Incidents"],  # Display incident counts on bars
+        textposition="outside",  # Position text outside the bars
+    ))
+
+    # Update layout
+    fig_top5.update_layout(
+        title="Top 5 Countries with the Most Terrorism Incidents",
+        xaxis_title="Total Incidents",
+        yaxis_title="Country",
+        font=dict(size=14, family="Arial, sans-serif"),
+        template="plotly_white",  # Clean white theme
+        margin=dict(l=100, r=50, t=80, b=50),  # Adjust margins for spacing
+        hovermode="y unified",  # Show hover info for all traces at once
     )
-    ax_top5.set_title("Top 5 Countries with the Most Terrorism Incidents", fontsize=16, fontweight="bold")
-    ax_top5.set_xlabel("Total Incidents", fontsize=14, fontweight="bold")
-    ax_top5.set_ylabel("Country", fontsize=14, fontweight="bold")
-    ax_top5.grid(alpha=0.3)
-    st.pyplot(fig_top5)
+
+    # Show the interactive plot
+    st.plotly_chart(fig_top5, use_container_width=True)
 
     # Display the top 5 countries as a table
     st.subheader("Top 5 Countries Data")
