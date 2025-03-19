@@ -511,16 +511,6 @@ elif page == "EDA":
   
 
 
-
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import seaborn as sns
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-
 if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
@@ -652,7 +642,7 @@ if page == "Prediction":
             # Add explanatory text above the graph
             st.subheader("Incident Prediction Graph")
             st.write("""
-            The graph below shows the historical and predicted terrorism incidents for the selected country. 
+            The graph below shows the historical and predicted terrorism incidents for the selected country. By default will show the incidents from year 2012 to 2022 
             - **Blue Line**: Represents the actual number of incidents recorded in previous years.
             - **Green Dashed Line**: Represents the forecasted number of incidents for future years.
             - Hover over the data points to see exact values for each year.
