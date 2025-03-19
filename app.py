@@ -514,6 +514,14 @@ elif page == "EDA":
 
 
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+
 if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
