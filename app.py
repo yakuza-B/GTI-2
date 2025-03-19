@@ -511,13 +511,6 @@ elif page == "EDA":
   
 
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-import seaborn as sns
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 
 if page == "Prediction":
     sns.set_style("whitegrid")
@@ -574,7 +567,7 @@ if page == "Prediction":
     st.plotly_chart(fig_top5, use_container_width=True)
 
     # Display the top 5 countries as a table
-    st.subheader("Top 5 Countries Data")
+    st.subheader("Top 5 Countries with the Most Incidents Data")
     st.dataframe(top_countries)
 
     # Section: Country-Specific Prediction
