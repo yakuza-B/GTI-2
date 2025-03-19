@@ -472,35 +472,29 @@ if page == "Prediction":
     
     # Create an interactive bar chart using Plotly
     fig_top5 = go.Figure()
-
-    # Add bars
     fig_top5.add_trace(go.Bar(
         x=top_countries["Incidents"],
         y=top_countries["Country"],
-        orientation="h",  # Horizontal bar chart
-        marker=dict(color=top_countries["Incidents"], colorscale="Reds"),  # Gradient color scale
-        text=top_countries["Incidents"],  # Display incident counts on bars
-        textposition="outside",  # Position text outside the bars
+        orientation="h",
+        marker=dict(color=top_countries["Incidents"], colorscale="Reds"),
+        text=top_countries["Incidents"],
+        textposition="outside",
     ))
-
-    # Update layout
     fig_top5.update_layout(
         title="Top 5 Countries with the Most Terrorism Incidents",
         xaxis_title="Total Incidents",
         yaxis_title="Country",
         font=dict(size=14, family="Arial, sans-serif"),
-        template="plotly_white",  # Clean white theme
-        margin=dict(l=100, r=50, t=80, b=50),  # Adjust margins for spacing
-        hovermode="y unified",  # Show hover info for all traces at once
+        template="plotly_white",
+        margin=dict(l=100, r=50, t=80, b=50),
+        hovermode="y unified",
     )
-
-    # Show the interactive plot
     st.plotly_chart(fig_top5, use_container_width=True)
-
+    
     # Display the top 5 countries as a table
     st.subheader("Top 5 Countries with the Most Terrorism Incidents Data")
     st.dataframe(top_countries)
-
+    
     # Section: Country-Specific Prediction
     st.subheader("Predict Future Terrorism Incidents for a Specific Country")
     st.write("""
@@ -512,11 +506,13 @@ if page == "Prediction":
     
     # Filter data by the selected country
     country_data = data[data["Country"] == selected_country]
+    
     if country_data.empty:
-        st.warning("No data available for the selected country.")
+        st.warning(f"No data available for {selected_country}. Unable to make predictions.")
     else:
         # Group by Year and sum incidents
         incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
+        
         if incidents_by_year.empty or incidents_by_year["Incidents"].sum() == 0:
             st.warning(f"No incidents recorded for {selected_country}. Unable to make predictions.")
         elif len(incidents_by_year) < 5:
@@ -550,8 +546,6 @@ if page == "Prediction":
             
             # Improved graph visualization using Plotly
             fig = go.Figure()
-
-            # Add actual data
             fig.add_trace(go.Scatter(
                 x=incidents_by_year["Year"],
                 y=incidents_by_year["Incidents"],
@@ -560,8 +554,6 @@ if page == "Prediction":
                 line=dict(color="#4C72B0", width=2),
                 marker=dict(size=8)
             ))
-
-            # Add forecasted data
             fig.add_trace(go.Scatter(
                 x=forecast_years,
                 y=forecast_values,
@@ -570,31 +562,26 @@ if page == "Prediction":
                 line=dict(color="green", width=2, dash="dash"),
                 marker=dict(size=8)
             ))
-
-            # Update layout
             fig.update_layout(
                 title=f"Incident Prediction for {selected_country}",
                 xaxis_title="Year",
                 yaxis_title="Total Incidents",
                 font=dict(size=14, family="Arial, sans-serif"),
                 legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                hovermode="x unified",  # Show hover info for all traces at once
-                template="plotly_white",  # Clean white theme
-                margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
+                hovermode="x unified",
+                template="plotly_white",
+                margin=dict(l=50, r=50, t=80, b=50)
             )
-
+            
             # Add explanatory text above the graph
             st.subheader("Incident Prediction Graph")
             st.write("""
-            The graph below shows the historical and predicted terrorism incidents for the selected country. By default will show the incidents from year 2012 to 2022 
+            The graph below shows the historical and predicted terrorism incidents for the selected country. 
             - **Blue Line**: Represents the actual number of incidents recorded in previous years.
             - **Green Dashed Line**: Represents the forecasted number of incidents for future years.
             - Hover over the data points to see exact values for each year.
-            
             Note: The predictions are based on the SARIMA model and may not account for unforeseen events or changes in trends.
             """)
-            
-            # Show the interactive plot
             st.plotly_chart(fig, use_container_width=True)
             
             # Display forecast values without upper/lower bounds
