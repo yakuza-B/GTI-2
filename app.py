@@ -6,7 +6,6 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
-from statsmodels.tsa.holtwinters import Holt
 import numpy as np
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import plotly.graph_objects as go
