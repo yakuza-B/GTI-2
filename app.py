@@ -513,7 +513,6 @@ elif page == "EDA":
 
 
 
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -650,18 +649,18 @@ if page == "Prediction":
                 margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
             )
 
-            # Show the interactive plot first
+            # Add explanatory text above the graph
             st.subheader("Incident Prediction Graph")
-            st.plotly_chart(fig, use_container_width=True)
-            
-            # Add explanatory text below the graph
             st.write("""
-            The graph above shows the historical and predicted terrorism incidents for the selected country. 
+            The graph below shows the historical and predicted terrorism incidents for the selected country. 
             - **Blue Line**: Represents the actual number of incidents recorded in previous years.
             - **Green Dashed Line**: Represents the forecasted number of incidents for future years.
             - Hover over the data points to see exact values for each year.
             Note: The predictions are based on the SARIMA model and may not account for unforeseen events or changes in trends.
             """)
+            
+            # Show the interactive plot
+            st.plotly_chart(fig, use_container_width=True)
             
             # Display forecast values without upper/lower bounds
             st.subheader(f"Predicted Incidents for {selected_country}:")
