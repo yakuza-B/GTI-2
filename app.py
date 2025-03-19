@@ -642,7 +642,9 @@ if page == "Prediction":
                 margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
             )
 
-            
+            # Show the interactive plot first
+            st.subheader("Incident Prediction Graph")
+            st.plotly_chart(fig, use_container_width=True)
             
             # Display forecast values without upper/lower bounds
             st.subheader(f"Predicted Incidents for {selected_country}:")
