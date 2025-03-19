@@ -602,43 +602,55 @@ if page == "Prediction":
             last_year = incidents_by_year["Year"].max()
             forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
             
-            # Generate forecasts with confidence intervals
+            # Generate forecasts
             forecast = fit.get_forecast(steps=num_years_to_predict)
             forecast_values = np.maximum(forecast.predicted_mean, 0)  # Ensure non-negative predictions
-            confidence_intervals = np.maximum(forecast.conf_int(), 0)  # Ensure non-negative intervals
             
-            # Plot results
-            fig, ax = plt.subplots(figsize=(12, 6))
-            ax.plot(
-                incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0"
-            )
-            ax.plot(
-                forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                linewidth=2, color="green", label="Forecast"
-            )
-            ax.fill_between(
-                forecast_years,
-                confidence_intervals.iloc[:, 0],
-                confidence_intervals.iloc[:, 1],
-                color="green", alpha=0.2, label="Confidence Interval"
-            )
-            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
-            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
-            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
-            ax.legend(fontsize=12)
-            ax.grid(alpha=0.3)
-            st.pyplot(fig)
-            
-            # Display forecast values
+            # Display forecast values without upper/lower bounds
             st.subheader(f"Predicted Incidents for {selected_country}:")
             predictions = pd.DataFrame({
                 "Year": forecast_years,
-                "Predicted Incidents": forecast_values,
-                "Lower Bound": confidence_intervals.iloc[:, 0],
-                "Upper Bound": confidence_intervals.iloc[:, 1]
+                "Predicted Incidents": forecast_values
             })
             st.dataframe(predictions)
+            
+            # Improved graph visualization using Plotly
+            fig = go.Figure()
+
+            # Add actual data
+            fig.add_trace(go.Scatter(
+                x=incidents_by_year["Year"],
+                y=incidents_by_year["Incidents"],
+                mode="lines+markers",
+                name="Actual Data",
+                line=dict(color="#4C72B0", width=2),
+                marker=dict(size=8)
+            ))
+
+            # Add forecasted data
+            fig.add_trace(go.Scatter(
+                x=forecast_years,
+                y=forecast_values,
+                mode="lines+markers",
+                name="Forecast",
+                line=dict(color="green", width=2, dash="dash"),
+                marker=dict(size=8)
+            ))
+
+            # Update layout
+            fig.update_layout(
+                title=f"Incident Prediction for {selected_country}",
+                xaxis_title="Year",
+                yaxis_title="Total Incidents",
+                font=dict(size=14, family="Arial, sans-serif"),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                hovermode="x unified",  # Show hover info for all traces at once
+                template="plotly_white",  # Clean white theme
+                margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
+            )
+
+            # Show the interactive plot
+            st.plotly_chart(fig, use_container_width=True)
             
             # Model Evaluation Metrics
             residuals = fit.resid
