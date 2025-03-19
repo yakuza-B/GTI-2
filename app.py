@@ -514,15 +514,6 @@ elif page == "EDA":
 
 
 
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import seaborn as sns
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-
 if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
@@ -651,9 +642,7 @@ if page == "Prediction":
                 margin=dict(l=50, r=50, t=80, b=50)  # Adjust margins for spacing
             )
 
-            # Show the interactive plot first
-            st.subheader("Incident Prediction Graph")
-            st.plotly_chart(fig, use_container_width=True)
+            
             
             # Display forecast values without upper/lower bounds
             st.subheader(f"Predicted Incidents for {selected_country}:")
