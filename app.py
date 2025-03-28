@@ -53,6 +53,10 @@ st.markdown("""
 st.sidebar.title("📍 Navigation")
 page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "EDA", "Prediction"])
 
+if page != "EDA":
+    if "show_eda" in st.session_state:
+        st.session_state.show_eda = False
+
 
 if page == "About Us":
     st.markdown("<p class='title'>👥 About Us</p>", unsafe_allow_html=True)
