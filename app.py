@@ -11,11 +11,6 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 import plotly.graph_objects as go
     
 
-
-
-
-
-
 # Encode the image as base64
 def get_base64_image(image_path):
     with open(image_path, "rb") as img_file:
@@ -24,15 +19,8 @@ def get_base64_image(image_path):
 # Replace 'your_image.png' with the actual image filename
 image_base64 = get_base64_image("istockphoto-106492379-612x612.jpg")
 
-
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
-
-
-
-
-
-
 
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
@@ -128,9 +116,6 @@ if page == "About Us":
 if page == "Introduction":
     st.markdown("<p class='title'>🌍 Global Terrorism Index 2023 Dashboard</p>", unsafe_allow_html=True)
     
-    
-   
-    
     # Center Image 
     st.markdown(
     """
@@ -140,13 +125,6 @@ if page == "Introduction":
     """.format(base64.b64encode(open("istockphoto-106492379-612x612.jpg", "rb").read()).decode()),
     unsafe_allow_html=True
 )
-
-
-
-
-
-
-
 
     # Introduction Text
     st.write("""
@@ -526,11 +504,7 @@ elif page == "EDA":
            This analysis provides a quantitative view of how different terrorism-related factors interact, helping policymakers and researchers understand the broader impact of terrorist activities.
            </p>
            """, unsafe_allow_html=True)
-
-
-   
-
-
+          
         
     # 🌍 Geographic Analysis
       with tab1:
@@ -583,12 +557,6 @@ elif page == "EDA":
              These trends highlight the importance of the global fight against terrorism, particularly the need to strengthen security measures and international cooperation in conflict-prone regions to reduce the threat of terrorism.
              </p>
              """, unsafe_allow_html=True)
-
-
-
-
-  
-
 
 
 if page == "Prediction":
