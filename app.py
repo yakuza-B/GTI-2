@@ -52,15 +52,15 @@ if page == "About Us":
     st.write("""
     ## 🌟 Welcome to Our Interactive Global Terrorism Index 2023 Dashboard!
     
-    This dashboard is designed to provide a *comprehensive analysis* of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as *country, **year, **number of incidents, **fatalities, and **injuries* impact the global terrorism landscape.
+    This dashboard is designed to provide a comprehensive analysis of global terrorism trends. By leveraging the dataset below, we deliver valuable insights into how various factors such as country, **year, **number of incidents, **fatalities, and **injuries impact the global terrorism landscape.
     """)
 
     # Dataset Information
     st.subheader("📊 Preprocessed Global Terrorism Index Dataset")
     st.write(f"""
-    - *Number of Rows*: {len(data):,}  
-    - *Key Features*: Country, Year, Incidents, Fatalities, Injuries, Hostages  
-    - *Purpose*: To analyze and visualize terrorism trends across different dimensions.
+    - Number of Rows: {len(data):,}  
+    - Key Features: Country, Year, Incidents, Fatalities, Injuries, Hostages  
+    - Purpose: To analyze and visualize terrorism trends across different dimensions.
     """)
 
     # Display Full Dataset (Optional)
@@ -98,7 +98,7 @@ if page == "About Us":
     with col3:
         st.metric(label="🚑 Total Injuries", value=f"{total_injuries:,}")
 
-    st.write(f"🔹 *Years Covered*: {years_covered}")
+    st.write(f"🔹 Years Covered: {years_covered}")
 
     st.write("🔹 Our goal is to provide valuable insights to enhance awareness and support data-driven decision-making. Thank you for using our dashboard!")
 
@@ -106,9 +106,9 @@ if page == "About Us":
 # Submitted By Section
     st.subheader("📝 Submitted By:")
     st.markdown("""
-    - *Bernard*  
-    - *Barry*   
-    - *Travis*  
+    - Bernard  
+    - Barry   
+    - Travis  
     """)
 
 
@@ -129,29 +129,29 @@ if page == "Introduction":
     # Introduction Text
     st.write("""
     ## 📊 Understanding Global Terrorism Trends
-    Terrorism remains one of the most critical global security challenges, affecting *millions of lives* and disrupting societies. 
-    The *Global Terrorism Index Dashboard* provides insights into terrorism incidents worldwide using *2023* data.
+    Terrorism remains one of the most critical global security challenges, affecting millions of lives and disrupting societies. 
+    The Global Terrorism Index Dashboard provides insights into terrorism incidents worldwide using 2023 data.
 
-    ### 🛡 *What is Terrorism?*
-    Terrorism refers to *the unlawful use of violence and intimidation*, especially against civilians, to achieve political, 
+    ### 🛡 What is Terrorism?
+    Terrorism refers to the unlawful use of violence and intimidation, especially against civilians, to achieve political, 
     religious, or ideological goals. It often targets governments, infrastructure, and innocent populations to spread fear 
     and influence decision-making.
 
-    ### 🌎 *Global Trends in Terrorism*
+    ### 🌎 Global Trends in Terrorism
     Over the years, terrorism has evolved in scale, tactics, and geographical distribution. Some key trends include:
 
-    - 📈 *Rise and fall of terrorist organizations*: Groups like ISIS, Al-Qaeda, and Boko Haram have shaped global security, while some have weakened due to counterterrorism efforts.
-    - 🌍 *Regional Hotspots: The highest number of terrorist attacks occur in regions like the **Middle East, South Asia, and Africa*.
-    - 🔥 *Shifting Strategies*: Terrorist groups have adapted to technology, using social media for propaganda, recruitment, and financing.
-    - 📉 *Declining Trends: Some regions have seen a decrease in attacks due to **strong counterterrorism policies* and *intelligence cooperation*.
+    - 📈 Rise and fall of terrorist organizations: Groups like ISIS, Al-Qaeda, and Boko Haram have shaped global security, while some have weakened due to counterterrorism efforts.
+    - 🌍 Regional Hotspots: The highest number of terrorist attacks occur in regions like the **Middle East, South Asia, and Africa.
+    - 🔥 Shifting Strategies: Terrorist groups have adapted to technology, using social media for propaganda, recruitment, and financing.
+    - 📉 Declining Trends: Some regions have seen a decrease in attacks due to **strong counterterrorism policies and intelligence cooperation.
 
-    ### 🔹 *Key Features of This Dashboard*
+    ### 🔹 Key Features of This Dashboard
     This dashboard allows users to explore global terrorism trends using real-time data and visualization tools.
 
-    - 📌 *Overview of terrorism incidents* by *country* and *year*.
-    - 🔍 *Interactive tools* for analyzing trends and patterns.
-    - 📊 *Heatmaps & time-series charts* to understand attack frequency.
-    - 🌎 *Insights on the top 10 most affected countries*.
+    - 📌 Overview of terrorism incidents by country and year.
+    - 🔍 Interactive tools for analyzing trends and patterns.
+    - 📊 Heatmaps & time-series charts to understand attack frequency.
+    - 🌎 Insights on the top 10 most affected countries.
 
     By studying these trends, policymakers, researchers, and the public can **better understand terrorism and develop 
     strategies to prevent future threats**.
@@ -183,7 +183,7 @@ if page == "Introduction":
             st.error("❌ Incorrect. The correct answer is Afghanistan.")
 
     # Moved navigation instructions below the poll
-    st.markdown("📂 *For more infomation, navigate through the sections using the sidebar.*")
+    st.markdown("📂 For more infomation, navigate through the sections using the sidebar.")
 
 
 
@@ -200,7 +200,7 @@ if 'page' in locals() and page == "Overview":
     col1, col2 = st.columns([1.2, 2])  # 1: GIF, 2: Text
 
     with col1:
-        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGhiaTAxOHA4OWdqY2xuaXp2czA3c3UzYTBlbGM2c3R6cXZzbWI3OCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=400)
+        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=400)
 
     with col2:
         st.markdown("""
@@ -291,15 +291,15 @@ elif page == "EDA":
         st.markdown("""
         <h1 style='text-align: center; color: #3366CC;'>🔍 Exploratory Data Analysis (EDA)</h1>
         <p style='text-align: center; font-size:18px;'>
-            Welcome to the **Exploratory Data Analysis Dashboard**!  
-            In this section, we take a deep dive into the **Global Terrorism Index 2023** dataset to uncover key insights.  
+            Welcome to the *Exploratory Data Analysis Dashboard*!  
+            In this section, we take a deep dive into the *Global Terrorism Index 2023* dataset to uncover key insights.  
             Through interactive visualizations and statistical analysis, we aim to answer crucial questions, such as:
         </p>
         <ul>
-            <li>📌 Which countries experience the highest number of terrorist incidents?</li>
-            <li>📈 How have terrorist incidents, fatalities, and injuries evolved over time?</li>
-            <li>🔥 What factors are most correlated with terrorism severity?</li>
             <li>🌍 How do terrorist incidents vary across different regions, and which areas are most affected?</li>
+            <li>📌 Which countries experience the highest number of terrorist incidents?</li>
+            <li>📈 How have hostages, fatalities, and injuries in terrorist incidents evolved over time?</li>
+            <li>🔥 What factors are most correlated with terrorism severity?</li>
         </ul>
         <p style='text-align: center;'>Understanding these patterns is essential for policymakers, security agencies, and researchers working towards a safer world.</p>
         <hr style='border: 1px solid #ddd;'>
@@ -566,7 +566,7 @@ if page == "Prediction":
     # Title for the Prediction Page
     st.markdown("<p class='title'> Terrorism Incident Prediction</p>", unsafe_allow_html=True)
     st.write("""
-    This application predicts future terrorism incidents using *SARIMA (Seasonal ARIMA)*, 
+    This application predicts future terrorism incidents using SARIMA (Seasonal ARIMA), 
     a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
     in historical data to provide accurate predictions.
     """)
@@ -693,8 +693,8 @@ if page == "Prediction":
             st.subheader("Incident Prediction Graph")
             st.write("""
             The graph below shows the historical and predicted terrorism incidents for the selected country. 
-            - *Blue Line*: Represents the actual number of incidents recorded in previous years.
-            - *Green Dashed Line*: Represents the forecasted number of incidents for future years.
+            - Blue Line: Represents the actual number of incidents recorded in previous years.
+            - Green Dashed Line: Represents the forecasted number of incidents for future years.
             - Hover over the data points to see exact values for each year.
             Note: The predictions are based on the SARIMA model and may not account for unforeseen events or changes in trends.
             """)
@@ -713,5 +713,5 @@ if page == "Prediction":
             mae = np.mean(np.abs(residuals))
             rmse = np.sqrt(np.mean(residuals**2))
             st.subheader("Model Evaluation Metrics")
-            st.write(f"- *Mean Absolute Error (MAE)*: {mae:.2f}")
-            st.write(f"- *Root Mean Squared Error (RMSE)*: {rmse:.2f}")
+            st.write(f"- Mean Absolute Error (MAE): {mae:.2f}")
+            st.write(f"- Root Mean Squared Error (RMSE): {rmse:.2f}")
